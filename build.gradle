@@ -20,6 +20,22 @@ allprojects {
         google()
         jcenter()
     }
+
+    // Configure the project build directories to be relative to a
+    // base build directory if one is defined in, for example, a
+    // Gradle properties file.  This provides the ability to store the
+    // source code on a synced store, such as Google Drive, without
+    // incurring the stress, strain and inherent problem in trying to
+    // sync build files.  The build files would likely live isolated
+    // to each local development system.
+
+    // TODO: A better solution, possibly optimal, would be to provide
+    // a Gradle plugin to handle a more complete implementation
+    // mirroring the app structure.
+    if (rootProject.hasProperty('baseBuildDir') && baseBuildDir != null) {
+        buildDir = baseBuildDir + (parent == null ? "/${project.name}/build"
+                : "/${rootProject.name}/${project.name}/build")
+    }
 }
 
 task clean(type: Delete) {
