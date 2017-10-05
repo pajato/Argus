@@ -17,6 +17,7 @@
 
 package com.pajato.argus
 
+import android.app.Activity
 import android.support.test.InstrumentationRegistry.getInstrumentation
 import android.support.test.espresso.Espresso.*
 import android.support.test.espresso.NoActivityResumedException
@@ -25,8 +26,7 @@ import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.DrawerActions
 import android.support.test.espresso.contrib.DrawerMatchers.isClosed
 import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
+import android.support.test.espresso.matcher.ViewMatchers.Visibility.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.view.Gravity
@@ -47,7 +47,7 @@ import org.junit.runner.RunWith
 class MainActivityTest {
 
     /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField var activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    @Rule @JvmField val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
 
     /** Ensure that the FAB button click handler code is invoked. */
     @Test fun testFabButton() {
@@ -99,18 +99,42 @@ class MainActivityTest {
         onView(withText(R.string.action_settings)).perform(click())
 
         // Exercise the default case, the dummy test menu item.
-        //activityRule.activity.clearFindViewByIdCache()
-        val menu = activityRule.activity.toolbar.menu
-        activityRule.activity.onOptionsItemSelected(menu.findItem(R.id.test_item))
+        val mainActivity = activityRule.activity
+        val menu = mainActivity.toolbar.menu
+        mainActivity.onOptionsItemSelected(menu.findItem(R.id.test_item))
     }
 
     /** Check that the initial display shows the main activity views. */
     @Test fun testInitialState() {
         checkViewVisibility(withId(R.id.nav_view), INVISIBLE)
         checkViewVisibility(withId(R.id.toolbar), VISIBLE)
-        checkViewVisibility(withId(R.id.emptyListText), VISIBLE)
-        checkViewVisibility(withId(R.id.emptyListText), VISIBLE)
         checkViewVisibility(withId(R.id.fab), VISIBLE)
+    }
+
+    /** Check that the empty video list content is correct. */
+    @Test fun testEmptyList() {
+        // Disable the non-empty video list content and enable the empty list video content.
+        val mainActivity = activityRule.activity
+        mainActivity.runOnUiThread {
+            mainActivity.emptyListFrame.visibility = View.VISIBLE
+            mainActivity.nonEmptyListFrame.visibility = View.GONE
+        }
+        checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
+        checkViewVisibility(withId(R.id.emptyListText), VISIBLE)
+        checkViewVisibility(withId(R.id.listItems), GONE)
+    }
+
+    /** Check that the non-empty video list content is correct. */
+    @Test fun testNonEmptyList() {
+        // Disable the empty video list content and enable the non-empty video list content.
+        val mainActivity = activityRule.activity
+        mainActivity.runOnUiThread {
+            mainActivity.emptyListFrame.visibility = View.GONE
+            mainActivity.nonEmptyListFrame.visibility = View.VISIBLE
+        }
+        checkViewVisibility(withId(R.id.emptyListIcon), GONE)
+        checkViewVisibility(withId(R.id.emptyListText), GONE)
+        checkViewVisibility(withId(R.id.listItems), VISIBLE)
     }
 
     // Private functions:
@@ -127,5 +151,10 @@ class MainActivityTest {
         checkViewVisibility(withId(R.id.nav_view), VISIBLE)
         onView(withText(title)).perform(click())
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.close())
+    }
+
+    /** Provide an extension on the Activity class to run code on the UI thread. */
+    fun Activity.runOnUiThread(f: () -> Unit) {
+        runOnUiThread { f() }
     }
 }
