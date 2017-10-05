@@ -5,4 +5,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="EmptyListText">Tap the button below\nto add a video.</string>
+    <string name="EmptyListIconDescription">The empty list Argus app icon</string>
 </resources>
