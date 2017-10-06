@@ -17,11 +17,15 @@
 
 package com.pajato.argus
 
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
+import android.support.test.InstrumentationRegistry.getInstrumentation
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
-import android.support.test.espresso.matcher.ViewMatchers.withId
+import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import kotlinx.android.synthetic.main.app_bar_main.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,16 +35,20 @@ import org.junit.runner.RunWith
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class)
-class MainActivityTest : MainActivityBase() {
+@RunWith(AndroidJUnit4::class) class OptonsMenuTest : MainActivityBase() {
 
     /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
 
-    /** Check that the initial display shows the main activity views. */
-    @Test fun testInitialState() {
-        checkViewVisibility(withId(R.id.nav_view), INVISIBLE)
-        checkViewVisibility(withId(R.id.toolbar), VISIBLE)
-        checkViewVisibility(withId(R.id.fab), VISIBLE)
+    /** Test the overflow menu "Settings" item. */
+    @Test fun testOveflowMenuSettingsItem() {
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
+        checkViewVisibility(withText(R.string.action_settings), VISIBLE)
+        onView(withText(R.string.action_settings)).perform(click())
+
+        // Exercise the default case, the dummy test menu item.
+        val mainActivity = rule.activity
+        val menu = mainActivity.toolbar.menu
+        mainActivity.onOptionsItemSelected(menu.findItem(R.id.test_item))
     }
 }

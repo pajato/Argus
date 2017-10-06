@@ -17,7 +17,8 @@
 
 package com.pajato.argus
 
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.rule.ActivityTestRule
@@ -31,16 +32,16 @@ import org.junit.runner.RunWith
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class)
-class MainActivityTest : MainActivityBase() {
+@RunWith(AndroidJUnit4::class) class FabButtonTest : MainActivityBase() {
 
     /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
 
-    /** Check that the initial display shows the main activity views. */
-    @Test fun testInitialState() {
-        checkViewVisibility(withId(R.id.nav_view), INVISIBLE)
-        checkViewVisibility(withId(R.id.toolbar), VISIBLE)
+    /** Ensure that the FAB button click handler code is invoked. */
+    @Test fun testFabButton() {
+        // Ensure that the fab button uses a + icon.
         checkViewVisibility(withId(R.id.fab), VISIBLE)
+        onView(withId(R.id.fab)).perform(click())
+        // TODO: ensure the search activity is invoked.
     }
 }
