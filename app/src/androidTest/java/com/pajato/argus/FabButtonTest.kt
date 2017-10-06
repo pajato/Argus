@@ -21,27 +21,21 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
- * Provide sufficient tests that the MainActivity class is 100% covered.
+ * Test the FAB by ensuring that it is visible and initiates the search activity when clicked.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class) class FabButtonTest : MainActivityBase() {
-
-    /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+class FabButtonTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Ensure that the FAB button click handler code is invoked. */
     @Test fun testFabButton() {
-        // Ensure that the fab button uses a + icon.
+        // Ensure that the fab button is visible by default, click on it and ensure that the next
+        // activity is the video search activity.
         checkViewVisibility(withId(R.id.fab), VISIBLE)
         onView(withId(R.id.fab)).perform(click())
-        // TODO: ensure the search activity is invoked.
+        nextOpenActivityIs(SearchActivity::class.java)
     }
 }

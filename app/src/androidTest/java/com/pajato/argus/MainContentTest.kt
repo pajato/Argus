@@ -17,36 +17,19 @@
 
 package com.pajato.argus
 
-import android.app.Activity
-import android.support.test.InstrumentationRegistry.getInstrumentation
-import android.support.test.espresso.Espresso.*
-import android.support.test.espresso.NoActivityResumedException
-import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.contrib.DrawerActions
-import android.support.test.espresso.contrib.DrawerMatchers.isClosed
-import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.test.espresso.matcher.ViewMatchers.Visibility.*
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import android.view.Gravity
+import android.support.test.espresso.matcher.ViewMatchers.Visibility.GONE
+import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
+import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.view.View
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.hamcrest.Matcher
-import org.junit.Assert.fail
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
- * Provide sufficient tests that the MainActivity class is 100% covered.
+ * Test the main content configurations.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class) class MainContentTest : MainActivityBase() {
-
-    /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+class MainContentTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Check that the empty video list content is correct. */
     @Test fun testEmptyList() {

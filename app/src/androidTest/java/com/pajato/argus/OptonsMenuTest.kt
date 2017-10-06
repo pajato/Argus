@@ -23,22 +23,15 @@ import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withText
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
 import kotlinx.android.synthetic.main.app_bar_main.*
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Provide sufficient tests that the MainActivity class is 100% covered.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class) class OptonsMenuTest : MainActivityBase() {
-
-    /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+class OptonsMenuTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Test the overflow menu "Settings" item. */
     @Test fun testOveflowMenuSettingsItem() {

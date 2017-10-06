@@ -25,23 +25,16 @@ import android.support.test.espresso.contrib.DrawerActions
 import android.support.test.espresso.contrib.DrawerMatchers.isClosed
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
 import android.view.Gravity
 import org.junit.Assert.fail
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Provide sufficient tests that the MainActivity class is 100% covered.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class) class NavDrawerTest : MainActivityBase() {
-
-    /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+class NavDrawerTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Ensure that the back button normally exits the app. */
     @Test fun testBackPress() {

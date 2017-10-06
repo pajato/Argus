@@ -22,18 +22,27 @@ import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.DrawerActions
+import android.support.test.espresso.intent.Intents.intended
+import android.support.test.espresso.intent.matcher.IntentMatchers
+import android.support.test.espresso.intent.rule.IntentsTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
+import android.support.test.rule.ActivityTestRule
+import android.support.test.runner.AndroidJUnit4
 import android.view.View
 import org.hamcrest.Matcher
+import org.junit.Rule
+import org.junit.runner.RunWith
 
 /**
- * Provide sufficient tests that the MainActivity class is 100% covered.
+ * Provide an abstract base class for all test classes.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-//@RunWith(AndroidJUnit4::class)
-open class MainActivityBase() {
+@RunWith(AndroidJUnit4::class) abstract class ActivityTestBase<T : Activity>(theClass: Class<T>) {
+
+    /** Define the component under test using a JUnit rule. */
+    @Rule @JvmField val rule: ActivityTestRule<T> = IntentsTestRule(theClass)
 
     /** Check that a view's (via the given matcher) has the given visibility. */
     fun checkViewVisibility(viewMatcher: Matcher<View>, state: Visibility) {
@@ -47,6 +56,11 @@ open class MainActivityBase() {
         checkViewVisibility(withId(R.id.nav_view), VISIBLE)
         onView(withText(title)).perform(click())
         onView(withId(R.id.drawer_layout)).perform(DrawerActions.close())
+    }
+
+    /** ... */
+    fun <T : Activity> nextOpenActivityIs(theClass: Class<T>) {
+        intended(IntentMatchers.hasComponent(theClass.name))
     }
 
     /** Provide an extension on the Activity class to run code on the UI thread. */

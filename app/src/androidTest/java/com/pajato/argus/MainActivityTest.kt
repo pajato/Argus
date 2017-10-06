@@ -20,22 +20,14 @@ package com.pajato.argus
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withId
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Provide sufficient tests that the MainActivity class is 100% covered.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-@RunWith(AndroidJUnit4::class)
-class MainActivityTest : MainActivityBase() {
-
-    /** Define the component under test using a JUnit rule. */
-    @Rule @JvmField val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+class MainActivityTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Check that the initial display shows the main activity views. */
     @Test fun testInitialState() {
