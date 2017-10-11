@@ -34,23 +34,35 @@ class SearchActivity : AppCompatActivity() {
         drawable.mutate()
         val color = ContextCompat.getColor(applicationContext, android.R.color.white)
         drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        // Handle a click on the save button by wrapping up the activity.
+        item?.apply {
+            if (item.itemId == R.id.save_button) {
+                save()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
         super.onResume()
         // Add the auto-fill resources to the networks input.
-        val networks: List<String> = resources.getStringArray(R.array.networks).toList()
+        val networks = resources.getStringArray(R.array.networks).toList()
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, networks)
         network.setAdapter(arrayAdapter)
+
         // Force the activity to focus on the name input
         name.requestFocus()
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(name, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    fun save(menuItem: MenuItem) {
-
+    private fun save() {
         if (!name.text.isEmpty()) {
             val result = Intent()
             result.putExtra(TYPE_KEY, "video")
@@ -60,7 +72,6 @@ class SearchActivity : AppCompatActivity() {
         } else {
             setResult(Activity.RESULT_CANCELED)
         }
-
         finish()
     }
 

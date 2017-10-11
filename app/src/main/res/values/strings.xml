@@ -13,6 +13,8 @@
     <string name="done">Done</string>
     <string name="networkDescription">Enter a network name:</string>
     <string name="searchDescription">Get a video description: title and network</string>
+    <string name="searchName">Title</string>
+    <string name="networkName">Network</string>
     <string-array name="networks">
         <item>Netflix</item>
         <item>HBO</item>
