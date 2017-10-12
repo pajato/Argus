@@ -7,5 +7,11 @@
         android:orderInCategory="0"
         android:tint="@android:color/white"
         android:title="@string/done"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/test_item"
+        android:orderInCategory="100"
+        android:title="TestItem"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>
