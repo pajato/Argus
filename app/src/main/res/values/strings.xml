@@ -16,12 +16,22 @@
     <string name="searchName">Title</string>
     <string name="networkName">Network</string>
     <string-array name="networks">
-        <item>Netflix</item>
-        <item>HBO</item>
-        <item>PBS</item>
         <item>ABC</item>
-        <item>Hulu</item>
-        <item>BritBox</item>
         <item>Amazon</item>
+        <item>BritBox</item>
+        <item>Cinemax</item>
+        <item>Fox</item>
+        <item>Google Play</item>
+        <item>HBO Go</item>
+        <item>HBO Now</item>
+        <item>Hulu</item>
+        <item>NBC</item>
+        <item>Netflix</item>
+        <item>PBS</item>
+        <item>Showtime</item>
+        <item>Starz</item>
+        <item>TBS</item>
+        <item>The CW</item>
+        <item>YouTube Red</item>
     </string-array>
 </resources>
