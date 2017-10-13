@@ -28,12 +28,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Create the activity by establishing the layout, the toolbar and putting text watchers on
+        // the edit text boxes so that the save button can enabled/disabled appropriately.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setSupportActionBar(searchToolbar)
-
-        // Set up the search name and network properties to enable/disable the save button on text
-        // changes.
         searchName.afterTextChanged { processSaveButtonState() }
         network.afterTextChanged { processSaveButtonState() }
     }
@@ -58,19 +57,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        // Add the auto-fill resources to the networks input and set the focus on the search name
+        // edit text widget (and cause the soft keyboard to display if there is no hard keyboard).
         super.onResume()
-        // Add the auto-fill resources to the networks input.
         val networks = resources.getStringArray(R.array.networks).toList()
-        val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, networks)
-        network.setAdapter(arrayAdapter)
-
-        // Force the activity to focus on the name input
+        val id = android.R.layout.simple_dropdown_item_1line
+        network.setAdapter(ArrayAdapter<String>(this, id, networks))
         searchName.requestFocus()
-        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(searchName, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun save() {
+        // Return the collected data to the main activity.
         val result = Intent()
         result.putExtra(TYPE_KEY, "video")
         result.putExtra(TITLE_KEY, searchName.editableText.toString())
@@ -80,12 +77,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+        // Establish an edit text extension function to deal with the save button.
         this.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun afterTextChanged(editable: Editable?) {
                 afterTextChanged.invoke(editable.toString())
