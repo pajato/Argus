@@ -54,7 +54,7 @@ class SearchActivityTest : ActivityTestBase<SearchActivity>(SearchActivity::clas
 
         // Select the HBO network, ensure that the save button is now enabled and click on it.
         val hint = "h"
-        val network = "HBO"
+        val network = "HBO Go"
         onView(withId(R.id.searchName)).perform(replaceText(""))
         onView(withId(R.id.network))
                 .perform(click())
