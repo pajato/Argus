@@ -1,22 +1,47 @@
 package com.pajato.argus
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import com.pajato.argus.SearchActivity.Companion.NETWORK_KEY
+import com.pajato.argus.SearchActivity.Companion.TITLE_KEY
+import com.pajato.argus.SearchActivity.Companion.TYPE_KEY
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.non_empty_list_content_main.*
 
 @ContainerOptions(CacheImplementation.NO_CACHE)
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     // Public instance methods.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK && requestCode == Companion.SEARCH_REQUEST && data != null) {
+            val type = data.extras.get(TYPE_KEY) as String
+            val title = data.extras.get(TITLE_KEY) as String
+            val provider = data.extras.get(NETWORK_KEY) as String
+
+            val video = Video(title, provider, type)
+
+            emptyListFrame.visibility = View.GONE
+            nonEmptyListFrame.visibility = View.VISIBLE
+
+            val adapter: ListAdapter = (listItems.adapter as ListAdapter)
+            adapter.addItem(video)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +60,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
+        listItems.layoutManager = layoutManager
+        val adapter: RecyclerView.Adapter<ListAdapter.ViewHolder> = ListAdapter(mutableListOf())
+        listItems.adapter = adapter
     }
 
     override fun onBackPressed() {
