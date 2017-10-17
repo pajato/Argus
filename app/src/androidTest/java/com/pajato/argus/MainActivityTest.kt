@@ -45,15 +45,6 @@ class MainActivityTest : ActivityTestBase<MainActivity>(MainActivity::class.java
     @Test fun testActivityResultNullData() {
         val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
         intending(toPackage("com.pajato.argus")).respondWith(result)
-
-        onView(withId(R.id.fab)).perform(click())
-
-        checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
-    }
-
-    @Test fun testActivityResultSearch() {
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
-        intending(toPackage("com.pajato.argus")).respondWith(result)
         onView(withId(R.id.fab)).perform(click())
         checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
     }
