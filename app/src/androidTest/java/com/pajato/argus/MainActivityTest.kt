@@ -17,6 +17,12 @@
 
 package com.pajato.argus
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.intent.Intents.intending
+import android.support.test.espresso.intent.matcher.IntentMatchers.toPackage
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.INVISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE
 import android.support.test.espresso.matcher.ViewMatchers.withId
@@ -34,5 +40,28 @@ class MainActivityTest : ActivityTestBase<MainActivity>(MainActivity::class.java
         checkViewVisibility(withId(R.id.nav_view), INVISIBLE)
         checkViewVisibility(withId(R.id.toolbar), VISIBLE)
         checkViewVisibility(withId(R.id.fab), VISIBLE)
+    }
+
+    @Test fun testActivityResultNullData() {
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
+        intending(toPackage("com.pajato.argus")).respondWith(result)
+
+        onView(withId(R.id.fab)).perform(click())
+
+        checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
+    }
+
+    @Test fun testActivityResultSearch() {
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, null)
+        intending(toPackage("com.pajato.argus")).respondWith(result)
+        onView(withId(R.id.fab)).perform(click())
+        checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
+    }
+
+    @Test fun testActivityResultCanceled() {
+        val result = Instrumentation.ActivityResult(Activity.RESULT_CANCELED, null)
+        intending(toPackage("com.pajato.argus")).respondWith(result)
+        onView(withId(R.id.fab)).perform(click())
+        checkViewVisibility(withId(R.id.emptyListIcon), VISIBLE)
     }
 }

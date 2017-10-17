@@ -28,18 +28,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode == Activity.RESULT_OK && requestCode == Companion.SEARCH_REQUEST && data != null) {
-            val type = data.extras.get(TYPE_KEY) as String
-            val title = data.extras.get(TITLE_KEY) as String
-            val provider = data.extras.get(NETWORK_KEY) as String
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val type = data.getStringExtra(TYPE_KEY)
+            val title = data.getStringExtra(TITLE_KEY)
+            val provider = data.getStringExtra(NETWORK_KEY)
 
             val video = Video(title, provider, type)
 
             emptyListFrame.visibility = View.GONE
             nonEmptyListFrame.visibility = View.VISIBLE
 
-            val adapter: ListAdapter = (listItems.adapter as ListAdapter)
-            adapter.addItem(video)
+            val adapter = listItems.adapter
+            if (adapter is ListAdapter)
+                adapter.addItem(video)
         }
     }
 
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         listItems.layoutManager = layoutManager
-        val adapter: RecyclerView.Adapter<ListAdapter.ViewHolder> = ListAdapter(mutableListOf())
+        val adapter = ListAdapter(mutableListOf())
         listItems.adapter = adapter
     }
 
