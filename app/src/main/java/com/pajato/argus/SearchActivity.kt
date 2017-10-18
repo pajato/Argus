@@ -1,7 +1,6 @@
 package com.pajato.argus
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import kotlinx.android.extensions.CacheImplementation

@@ -11,3 +11,5 @@ fun String.stripRight() = this.replace(Regex("\\s+$"), "")
 
 /** Return a String where all white-space has been trimmed. */
 fun String.strip() = this.stripLeft().stripRight().stripMiddle()
+
+class Video(val title: String, val network: String, val type: String = "")

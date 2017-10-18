@@ -45,13 +45,23 @@ class SearchActivityTest : ActivityTestBase<SearchActivity>(SearchActivity::clas
         // The options menu item should be visible but disabled by default.
         checkViewVisibility(withId(R.id.save_button), VISIBLE)
         onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
+    }
 
+    @Test fun testSaveEnabling() {
         // Edit a value into the name edit text box and ensure the save button is still not enabled.
         val text = "Some video text"
         onView(withId(R.id.searchName)).perform(replaceText(text))
         onView(withText(text)).check(matches(isDisplayed()))
         onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.searchName)).perform(replaceText(text))
+        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
 
+        val network = "HBO Go"
+        onView(withId(R.id.network)).perform(replaceText(network))
+        onView(withId(R.id.save_button)).check(matches(isEnabled()))
+    }
+
+    @Test fun testNetworkAutoComplete() {
         // Select the HBO network, ensure that the save button is now enabled and click on it.
         val hint = "h"
         val network = "HBO Go"
@@ -60,8 +70,7 @@ class SearchActivityTest : ActivityTestBase<SearchActivity>(SearchActivity::clas
                 .perform(click())
                 .perform(replaceText(hint))
         onData(equalTo(network)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
-        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
-        onView(withId(R.id.searchName)).perform(replaceText(text))
-        onView(withId(R.id.save_button)).check(matches(isEnabled())).perform(click())
+        onView(withId(R.id.network)).check(matches(withText(network)))
     }
+
 }

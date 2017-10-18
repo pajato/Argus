@@ -20,17 +20,23 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout android:id="@+id/emptyListFrame"
+    <FrameLayout
+        android:id="@+id/emptyListFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <include layout="@layout/empty_list_content_main" />
     </FrameLayout>
 
-    <FrameLayout android:id="@+id/nonEmptyListFrame"
+    <FrameLayout
+        android:id="@+id/nonEmptyListFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <include layout="@layout/non_empty_list_content_main" />
     </FrameLayout>
 
@@ -41,6 +47,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:tint="@color/colorIcons"
-        app:srcCompat="@drawable/ic_note_black_24dp"/>
+        app:srcCompat="@drawable/ic_note_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
