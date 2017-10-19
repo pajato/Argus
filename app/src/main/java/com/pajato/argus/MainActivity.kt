@@ -39,8 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             nonEmptyListFrame.visibility = View.VISIBLE
 
             val adapter = listItems.adapter
-            if (adapter is ListAdapter)
-                adapter.addItem(video)
+            (adapter as? ListAdapter)?.addItem(video)
         }
     }
 

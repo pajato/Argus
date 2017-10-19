@@ -8,12 +8,12 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.v7.widget.RecyclerView
 import kotlinx.android.synthetic.main.non_empty_list_content_main.*
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-
 class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
-    @Test
-    fun testInitialState() {
+
+    @Test fun testInitialState() {
         // Assert that the adapter is empty on start.
         val list: RecyclerView = rule.activity.listItems
         val adapter: ListAdapter = list.adapter as ListAdapter
@@ -21,8 +21,7 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         assertEquals(message, 0, adapter.itemCount)
     }
 
-    @Test
-    fun testEmptyListToFullList() {
+    @Test fun testEmptyListToFullList() {
         // Setup the Data to enter into the adapter.
         val list: RecyclerView = rule.activity.listItems
         val adapter: ListAdapter = list.adapter as ListAdapter
@@ -45,6 +44,20 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         assertEquals(video.title, videoName)
         assertEquals(video.network, network)
         assertEquals(video.type, type)
+    }
+
+    @Test fun testNullAdapter() {
+        // Perform a click on the FAB to cause data to be entered into the search activity fields
+        // and ensure that the activity result callback finds the adapter to be null, thus ensuring
+        // 100% coverage.
+        val list: RecyclerView = rule.activity.listItems
+        list.adapter = null
+        onView(withId(R.id.fab)).perform(click())
+        checkViewVisibility(withId(R.id.save_button), ViewMatchers.Visibility.VISIBLE)
+        onView(withId(R.id.searchName)).perform(replaceText("Luther"))
+        onView(withId(R.id.network)).perform(replaceText("HBO Now"))
+        onView(withId(R.id.save_button)).perform(click())
+        assertTrue("The adapter is not null!", list.adapter == null)
     }
 
 }
