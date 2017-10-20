@@ -1,12 +1,18 @@
 package com.pajato.argus
 
+import android.content.Intent
 import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.Espresso.pressBackUnconditionally
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.replaceText
+import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
+import android.support.v7.widget.AppCompatImageButton
 import android.support.v7.widget.RecyclerView
 import kotlinx.android.synthetic.main.non_empty_list_content_main.*
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.instanceOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -39,7 +45,7 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         // Test that the ActivityResult has interacted with the MainActivity & the data is displayed
         checkViewVisibility(withId(R.id.emptyListFrame), ViewMatchers.Visibility.GONE)
         checkViewVisibility(ViewMatchers.withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
-        assertEquals(adapter.itemCount, 1)
+        assertEquals("Adapter has wrong count", 1, adapter.itemCount)
         val video = adapter.items[0]
         assertEquals(video.title, videoName)
         assertEquals(video.network, network)
@@ -60,4 +66,35 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         assertTrue("The adapter is not null!", list.adapter == null)
     }
 
+    @Test fun testPersistedData() {
+        rule.activity.runOnUiThread {
+            var video = Video("Luther", "HBO Go")
+            rule.activity.addVideo(video)
+            video = Video("Boardwalk Empire", "HBO Now")
+            rule.activity.addVideo(video)
+        }
+
+        checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
+        assertEquals("Adapter has wrong count before lifecycles", 2, rule.activity.listItems.adapter.itemCount)
+        doLifeCycle()
+
+        checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
+        assertEquals("Adapter has wrong count after first lifecycle", 2, rule.activity.listItems.adapter.itemCount)
+        onView(allOf(instanceOf(AppCompatImageButton::class.java), hasSibling(withText("Luther")), hasSibling(withText("HBO Go"))))
+                .perform(click())
+        checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
+        assertEquals("Adapter has wrong count after deleting", 1, rule.activity.listItems.adapter.itemCount)
+
+        doLifeCycle()
+        checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
+        assertEquals("Adapter has wrong count after second lifecycle", 1, rule.activity.listItems.adapter.itemCount)
+
+    }
+
+    private fun doLifeCycle(intent: Intent? = null) {
+        pressBackUnconditionally()
+        Intents.release()
+
+        rule.launchActivity(intent)
+    }
 }

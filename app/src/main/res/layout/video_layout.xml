@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -18,5 +19,11 @@
         android:layout_height="wrap_content"
         android:tag="network"
         android:textSize="20sp" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tag="delete"
+        app:srcCompat="@drawable/ic_clear_black_24dp"/>
 
 </android.support.v7.widget.LinearLayoutCompat>

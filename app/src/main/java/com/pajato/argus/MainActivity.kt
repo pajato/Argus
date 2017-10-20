@@ -32,15 +32,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val type = data.getStringExtra(TYPE_KEY)
             val title = data.getStringExtra(TITLE_KEY)
             val provider = data.getStringExtra(NETWORK_KEY)
-
             val video = Video(title, provider, type)
-
-            emptyListFrame.visibility = View.GONE
-            nonEmptyListFrame.visibility = View.VISIBLE
-
-            val adapter = listItems.adapter
-            (adapter as? ListAdapter)?.addItem(video)
+            addVideo(video)
         }
+    }
+
+    fun addVideo(video: Video) {
+        updateLayoutIsEmpty(false)
+        val adapter = listItems.adapter
+        (adapter as? ListAdapter)?.addItem(video)
+        DatabaseHelper.writeVideo(video, applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +66,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listItems.layoutManager = layoutManager
         val adapter = ListAdapter(mutableListOf())
         listItems.adapter = adapter
+
+        // Query the Database and update the adapter.
+        val items: MutableList<Video> = DatabaseHelper.getVideosFromDb(applicationContext)
+        if (items.isNotEmpty()) {
+            updateLayoutIsEmpty(false)
+            for (item in items) {
+                adapter.addItem(item)
+            }
+        } else {
+            updateLayoutIsEmpty(true)
+        }
     }
 
     override fun onBackPressed() {
@@ -116,6 +128,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun updateLayoutIsEmpty(isEmpty: Boolean) {
+        if (isEmpty) {
+            emptyListFrame.visibility = View.VISIBLE
+            nonEmptyListFrame.visibility = View.GONE
+        } else {
+            emptyListFrame.visibility = View.GONE
+            nonEmptyListFrame.visibility = View.VISIBLE
+        }
     }
 
     companion object {
