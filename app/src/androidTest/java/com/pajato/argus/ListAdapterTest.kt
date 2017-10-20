@@ -67,6 +67,7 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
     }
 
     @Test fun testPersistedData() {
+        // Load in two videos of Data
         rule.activity.runOnUiThread {
             var video = Video("Luther", "HBO Go")
             rule.activity.addVideo(video)
@@ -74,10 +75,12 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
             rule.activity.addVideo(video)
         }
 
+        // Ensure that the videos' data is present, then do a lifecycle
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count before lifecycles", 2, rule.activity.listItems.adapter.itemCount)
         doLifeCycle()
 
+        // Ensure that the data is present post lifecycle, then delete one and ensure it's deleted.
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count after first lifecycle", 2, rule.activity.listItems.adapter.itemCount)
         onView(allOf(instanceOf(AppCompatImageButton::class.java), hasSibling(withText("Luther")), hasSibling(withText("HBO Go"))))
@@ -85,6 +88,7 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count after deleting", 1, rule.activity.listItems.adapter.itemCount)
 
+        // Lifecycle again, then ensure that only one data is left after lifecycling a final time.
         doLifeCycle()
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count after second lifecycle", 1, rule.activity.listItems.adapter.itemCount)

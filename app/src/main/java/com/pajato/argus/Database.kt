@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 
-/* Class that defines the table contents */
+/* Object that defines the table contents */
 object DatabaseEntry : BaseColumns {
     val TABLE_NAME = "video"
     val COLUMN_NAME_TITLE = "title"
@@ -16,6 +16,7 @@ object DatabaseEntry : BaseColumns {
     val _ID = BaseColumns._ID
 }
 
+/* Helper object with our shorthand database methods */
 object DatabaseHelper {
     fun writeVideo(v: Video, context: Context) {
         // Add the new entry into the database
@@ -27,11 +28,13 @@ object DatabaseHelper {
     }
 
     fun getVideosFromDb(context: Context): MutableList<Video> {
+        // Search the database for all entries.
         val db = DatabaseReaderHelper(context).readableDatabase
         val projection = arrayOf(DatabaseEntry._ID, DatabaseEntry.COLUMN_NAME_TITLE, DatabaseEntry.COLUMN_NAME_NETWORK)
         val sortOrder = DatabaseEntry.COLUMN_NAME_NETWORK + " DESC"
         val cursor: Cursor = db.query(DatabaseEntry.TABLE_NAME, projection, null, null, null, null, sortOrder)
         val items = mutableListOf<Video>()
+        // Put each of the database entries into Video objects and our video list.
         while (cursor.moveToNext()) {
             //val itemId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseEntry._ID))
             val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_TITLE))
@@ -44,6 +47,7 @@ object DatabaseHelper {
     }
 
     fun deleteVideo(v: Video, context: Context) {
+        // Delete a specific video entry from the database.
         val db = DatabaseReaderHelper(context).writableDatabase
         val selection: String = DatabaseEntry.COLUMN_NAME_TITLE + " LIKE ?"
         val args: Array<String> = arrayOf(v.title)
@@ -56,7 +60,7 @@ object DatabaseHelper {
     }
 }
 
-/* */
+/* Required SQLite implementation. */
 class DatabaseReaderHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_ENTRIES)

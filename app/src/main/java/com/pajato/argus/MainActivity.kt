@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun addVideo(video: Video) {
+        // Add a video to the adapter, and to the database.
         updateLayoutIsEmpty(false)
         val adapter = listItems.adapter
         (adapter as? ListAdapter)?.addItem(video)
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        // Initialize the adapter.
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         listItems.layoutManager = layoutManager
         val adapter = ListAdapter(mutableListOf())

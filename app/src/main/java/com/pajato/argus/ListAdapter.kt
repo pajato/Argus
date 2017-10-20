@@ -15,6 +15,7 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        // Fill in the data and set an onClick for the delete button
         val titleTextView = holder.layout.findViewWithTag<TextView>("title")
         titleTextView.text = items[position].title
         val networkTextView = holder.layout.findViewWithTag<TextView>("network")
@@ -38,7 +39,10 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         notifyItemRangeChanged(position, items.size)
     }
 
+    // The ViewHolder class
     class ViewHolder(val layout: View) : RecyclerView.ViewHolder(layout)
+
+    // An onClick that deletes the item from the adapter and removes it from the database.
     class Delete(private val holder: ViewHolder, private val adapter: ListAdapter) : View.OnClickListener {
         override fun onClick(v: View?) {
             DatabaseHelper.deleteVideo(adapter.items[holder.adapterPosition], holder.layout.context)
