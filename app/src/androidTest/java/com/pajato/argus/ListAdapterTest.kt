@@ -8,7 +8,7 @@ import android.support.test.espresso.action.ViewActions.replaceText
 import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
-import android.support.v7.widget.AppCompatImageButton
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.RecyclerView
 import kotlinx.android.synthetic.main.non_empty_list_content_main.*
 import org.hamcrest.Matchers.allOf
@@ -83,7 +83,8 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         // Ensure that the data is present post lifecycle, then delete one and ensure it's deleted.
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count after first lifecycle", 2, rule.activity.listItems.adapter.itemCount)
-        onView(allOf(instanceOf(AppCompatImageButton::class.java), hasSibling(withText("Luther")), hasSibling(withText("HBO Go"))))
+        onView(allOf(instanceOf(AppCompatImageView::class.java), hasSibling(withText("Luther")),
+                hasSibling(withText("HBO Go"))))
                 .perform(click())
         checkViewVisibility(withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count after deleting", 1, rule.activity.listItems.adapter.itemCount)

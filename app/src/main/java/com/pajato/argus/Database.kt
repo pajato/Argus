@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 
-/* Object that defines the table contents */
+/** The object that defines the table contents */
 object DatabaseEntry : BaseColumns {
     val TABLE_NAME = "video"
     val COLUMN_NAME_TITLE = "title"
@@ -16,51 +16,7 @@ object DatabaseEntry : BaseColumns {
     val _ID = BaseColumns._ID
 }
 
-/* Helper object with our shorthand database methods */
-object DatabaseHelper {
-    fun writeVideo(v: Video, context: Context) {
-        // Add the new entry into the database
-        val db = DatabaseReaderHelper(context).writableDatabase
-        val values = ContentValues()
-        values.put(DatabaseEntry.COLUMN_NAME_TITLE, v.title)
-        values.put(DatabaseEntry.COLUMN_NAME_NETWORK, v.network)
-        /*val newRowId: Long = */db.insert(DatabaseEntry.TABLE_NAME, null, values)
-    }
-
-    fun getVideosFromDb(context: Context): MutableList<Video> {
-        // Search the database for all entries.
-        val db = DatabaseReaderHelper(context).readableDatabase
-        val projection = arrayOf(DatabaseEntry._ID, DatabaseEntry.COLUMN_NAME_TITLE, DatabaseEntry.COLUMN_NAME_NETWORK)
-        val sortOrder = DatabaseEntry.COLUMN_NAME_NETWORK + " DESC"
-        val cursor: Cursor = db.query(DatabaseEntry.TABLE_NAME, projection, null, null, null, null, sortOrder)
-        val items = mutableListOf<Video>()
-        // Put each of the database entries into Video objects and our video list.
-        while (cursor.moveToNext()) {
-            //val itemId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseEntry._ID))
-            val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_TITLE))
-            val network = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_NETWORK))
-            val video = Video(title, network)
-            items.add(video)
-        }
-        cursor.close()
-        return items
-    }
-
-    fun deleteVideo(v: Video, context: Context) {
-        // Delete a specific video entry from the database.
-        val db = DatabaseReaderHelper(context).writableDatabase
-        val selection: String = DatabaseEntry.COLUMN_NAME_TITLE + " LIKE ?"
-        val args: Array<String> = arrayOf(v.title)
-        db.delete(DatabaseEntry.TABLE_NAME, selection, args)
-    }
-
-    fun deleteAll(context: Context) {
-        val db = DatabaseReaderHelper(context).writableDatabase
-        db.delete(DatabaseEntry.TABLE_NAME, null, null)
-    }
-}
-
-/* Required SQLite implementation. */
+/** A required SQLite implementation that handles . */
 class DatabaseReaderHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_ENTRIES)
@@ -86,4 +42,49 @@ class DatabaseReaderHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
             DATABASE_NAME = name
         }
     }
+}
+
+/** Write the given video into the database. */
+fun writeVideo(v: Video, context: Context) {
+    // Add the new entry into the database
+    val db = DatabaseReaderHelper(context).writableDatabase
+    val values = ContentValues()
+    values.put(DatabaseEntry.COLUMN_NAME_TITLE, v.title)
+    values.put(DatabaseEntry.COLUMN_NAME_NETWORK, v.network)
+    db.insert(DatabaseEntry.TABLE_NAME, null, values)
+}
+
+/** Returns a list of all the videos in the database. */
+fun getVideosFromDb(context: Context): MutableList<Video> {
+    // Search the database for all entries.
+    val db = DatabaseReaderHelper(context).readableDatabase
+    val projection = arrayOf(DatabaseEntry._ID, DatabaseEntry.COLUMN_NAME_TITLE, DatabaseEntry.COLUMN_NAME_NETWORK)
+    val sortOrder = DatabaseEntry.COLUMN_NAME_NETWORK + " DESC"
+    val cursor: Cursor = db.query(DatabaseEntry.TABLE_NAME, projection, null, null, null, null, sortOrder)
+    val items = mutableListOf<Video>()
+    // Put each of the database entries into Video objects and our video list.
+    while (cursor.moveToNext()) {
+        //val itemId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseEntry._ID))
+        val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_TITLE))
+        val network = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_NETWORK))
+        val video = Video(title, network)
+        items.add(video)
+    }
+    cursor.close()
+    return items
+}
+
+/** Deletes a specific video from the database, searching by video title. */
+fun deleteVideo(v: Video, context: Context) {
+    // Delete a specific video entry from the database.
+    val db = DatabaseReaderHelper(context).writableDatabase
+    val selection: String = DatabaseEntry.COLUMN_NAME_TITLE + " LIKE ?"
+    val args: Array<String> = arrayOf(v.title)
+    db.delete(DatabaseEntry.TABLE_NAME, selection, args)
+}
+
+/** Deletes all items in the database. */
+fun deleteAll(context: Context) {
+    val db = DatabaseReaderHelper(context).writableDatabase
+    db.delete(DatabaseEntry.TABLE_NAME, null, null)
 }

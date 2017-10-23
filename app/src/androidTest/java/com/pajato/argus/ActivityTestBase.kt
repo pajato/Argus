@@ -53,7 +53,7 @@ import org.junit.runner.RunWith
 
     @After fun clearDatabase() {
         // Cleanup after a test is run.
-        DatabaseHelper.deleteAll(rule.activity.applicationContext)
+        deleteAll(rule.activity.applicationContext)
     }
 
     /** Check that a view's (via the given matcher) has the given visibility. */

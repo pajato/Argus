@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         updateLayoutIsEmpty(false)
         val adapter = listItems.adapter
         (adapter as? ListAdapter)?.addItem(video)
-        DatabaseHelper.writeVideo(video, applicationContext)
+        writeVideo(video, applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listItems.adapter = adapter
 
         // Query the Database and update the adapter.
-        val items: MutableList<Video> = DatabaseHelper.getVideosFromDb(applicationContext)
+        val items: MutableList<Video> = getVideosFromDb(applicationContext)
         if (items.isNotEmpty()) {
             updateLayoutIsEmpty(false)
             for (item in items) {
