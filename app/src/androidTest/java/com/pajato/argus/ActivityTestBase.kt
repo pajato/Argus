@@ -31,6 +31,8 @@ import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.view.View
 import org.hamcrest.Matcher
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -43,6 +45,16 @@ import org.junit.runner.RunWith
 
     /** Define the component under test using a JUnit rule. */
     @Rule @JvmField val rule: ActivityTestRule<T> = IntentsTestRule(theClass)
+
+    @Before fun setDatabaseName() {
+        // TODO: Find a way to ensure this gets accomplished before the *first* test activity is loaded.
+        DatabaseReaderHelper.setDatabaseName("ArgusTest.db")
+    }
+
+    @After fun clearDatabase() {
+        // Cleanup after a test is run.
+        deleteAll(rule.activity.applicationContext)
+    }
 
     /** Check that a view's (via the given matcher) has the given visibility. */
     fun checkViewVisibility(viewMatcher: Matcher<View>, state: Visibility) {
