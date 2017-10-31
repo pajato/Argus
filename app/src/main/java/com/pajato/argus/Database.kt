@@ -74,6 +74,18 @@ fun getVideosFromDb(context: Context): MutableList<Video> {
     return items
 }
 
+fun updateVideo(previousTitle: String, v: Video, context: Context) {
+    val db = DatabaseReaderHelper(context).writableDatabase
+    val values = ContentValues()
+    values.put(DatabaseEntry.COLUMN_NAME_TITLE, v.title)
+    values.put(DatabaseEntry.COLUMN_NAME_NETWORK, v.network)
+
+    val selection = DatabaseEntry.COLUMN_NAME_TITLE + " LIKE ?"
+    val args: Array<String> = arrayOf(previousTitle)
+
+    db.update(DatabaseEntry.TABLE_NAME, values, selection, args)
+}
+
 /** Deletes a specific video from the database, searching by video title. */
 fun deleteVideo(v: Video, context: Context) {
     // Delete a specific video entry from the database.

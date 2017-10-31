@@ -48,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:completionThreshold="1"
+                android:imeOptions="actionDone"
                 android:dropDownAnchor="@id/network"
                 android:dropDownHeight="wrap_content"
                 android:dropDownWidth="wrap_content"

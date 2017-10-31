@@ -12,6 +12,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.TextView.OnEditorActionListener
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_search.*
@@ -33,6 +34,14 @@ class SearchActivity : AppCompatActivity() {
         setSupportActionBar(searchToolbar)
         searchName.afterTextChanged { processSaveButtonState() }
         network.afterTextChanged { processSaveButtonState() }
+
+        network.setOnEditorActionListener(OnEditorActionListener { _, _, _ ->
+            if (canSave()) {
+                save()
+                return@OnEditorActionListener true
+            }
+            return@OnEditorActionListener false
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -87,8 +96,12 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+    private fun canSave(): Boolean {
+        return !(searchName.text.isEmpty() || network.text.isEmpty())
+    }
+
     private fun processSaveButtonState() {
         val menu = searchToolbar.menu
-        menu.getItem(0).isEnabled = !(searchName.text.isEmpty() || network.text.isEmpty())
+        menu.getItem(0).isEnabled = canSave()
     }
 }
