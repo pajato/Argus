@@ -20,16 +20,16 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         // Fill in the title data and set up some input event listeners.
         val titleTextView = holder.layout.titleText
         titleTextView.setText(items[position].title)
-        val titleManager = PersistEditedData(titleTextView)
+        val titleManager = EditorHelper(titleTextView, holder.layout)
         titleTextView.setOnEditorActionListener(titleManager)
-        titleTextView.onFocusChangeListener = titleManager
+        titleTextView.addTextChangedListener(titleManager)
 
         // Do the same for the network view.
         val networkTextView = holder.layout.networkText
         networkTextView.setText(items[position].network)
-        val networkManager = PersistEditedData(networkTextView)
+        val networkManager = EditorHelper(networkTextView, holder.layout)
         networkTextView.setOnEditorActionListener(networkManager)
-        networkTextView.onFocusChangeListener = networkManager
+        networkTextView.addTextChangedListener(networkManager)
 
         val networks = holder.layout.context.resources.getStringArray(R.array.networks).toList()
         val id = android.R.layout.simple_dropdown_item_1line
