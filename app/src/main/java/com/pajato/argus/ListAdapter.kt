@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.video_layout.view.*
 
 class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
@@ -16,11 +17,24 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // Fill in the data
+        // Fill in the title data and set up some input event listeners.
         val titleTextView = holder.layout.titleText
-        titleTextView.text = items[position].title
+        titleTextView.setText(items[position].title)
+        val titleManager = EditorHelper(titleTextView, holder.layout)
+        titleTextView.setOnEditorActionListener(titleManager)
+        titleTextView.addTextChangedListener(titleManager)
+
+        // Do the same for the network view.
         val networkTextView = holder.layout.networkText
-        networkTextView.text = items[position].network
+        networkTextView.setText(items[position].network)
+        val networkManager = EditorHelper(networkTextView, holder.layout)
+        networkTextView.setOnEditorActionListener(networkManager)
+        networkTextView.addTextChangedListener(networkManager)
+
+        val networks = holder.layout.context.resources.getStringArray(R.array.networks).toList()
+        val id = android.R.layout.simple_dropdown_item_1line
+        networkTextView.setAdapter(ArrayAdapter<String>(holder.layout.context, id, networks))
+
         // Set an onClick and color the delete button.
         val deleteButton = holder.layout.deleteButton
         deleteButton.setOnClickListener(Delete(holder, this))
@@ -44,12 +58,4 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
 
     // The ViewHolder class
     class ViewHolder(val layout: View) : RecyclerView.ViewHolder(layout)
-
-    // An onClick that deletes the item from the adapter and removes it from the database.
-    class Delete(private val holder: ViewHolder, private val adapter: ListAdapter) : View.OnClickListener {
-        override fun onClick(v: View?) {
-            deleteVideo(adapter.items[holder.adapterPosition], holder.layout.context)
-            adapter.removeItem(holder.adapterPosition)
-        }
-    }
 }

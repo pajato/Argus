@@ -51,15 +51,25 @@ class SearchActivityTest : ActivityTestBase<SearchActivity>(SearchActivity::clas
     @Test fun testSaveEnabling() {
         // Edit a value into the name edit text box and ensure the save button is still not enabled.
         val text = "Some video text"
-        onView(withId(R.id.searchName)).perform(replaceText(text))
-        onView(withText(text)).check(matches(isDisplayed()))
-        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
-        onView(withId(R.id.searchName)).perform(replaceText(text))
-        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
-
         val network = "HBO Go"
+
+        // When the title name is entered but the network is not we should not be able to save
+        onView(withId(R.id.searchName)).perform(replaceText(text))
+        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.network)).perform(pressImeActionButton()).check(matches(isDisplayed()))
+
+        // When the title is not entered but the network is entered, we should still not be able to save
+        onView(withId(R.id.searchName)).perform(replaceText(""))
+        onView(withId(R.id.network)).perform(replaceText(network))
+        onView(withId(R.id.save_button)).check(matches(not(isEnabled())))
+        onView(withId(R.id.network)).perform(pressImeActionButton()).check(matches(isDisplayed()))
+
+        // When both have text, we should be able to save.
+        onView(withId(R.id.searchName)).perform(replaceText(text))
         onView(withId(R.id.network)).perform(replaceText(network))
         onView(withId(R.id.save_button)).check(matches(isEnabled()))
+        onView(withId(R.id.network)).perform(pressImeActionButton())
+        assertTrue(rule.activity.isFinishing)
     }
 
     @Test fun testAllNetworkAutoCompletes() {
