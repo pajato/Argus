@@ -21,14 +21,12 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         val titleTextView = holder.layout.titleText
         titleTextView.setText(items[position].title)
         val titleManager = EditorHelper(titleTextView, holder.layout)
-        titleTextView.setOnEditorActionListener(titleManager)
         titleTextView.addTextChangedListener(titleManager)
 
         // Do the same for the network view.
         val networkTextView = holder.layout.networkText
         networkTextView.setText(items[position].network)
         val networkManager = EditorHelper(networkTextView, holder.layout)
-        networkTextView.setOnEditorActionListener(networkManager)
         networkTextView.addTextChangedListener(networkManager)
 
         val networks = holder.layout.context.resources.getStringArray(R.array.networks).toList()
@@ -39,6 +37,7 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         val deleteButton = holder.layout.deleteButton
         deleteButton.setOnClickListener(Delete(holder, this))
         deleteButton.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+        holder.layout.card_view.setOnTouchListener(TakeFocus())
     }
 
     override fun getItemCount(): Int {

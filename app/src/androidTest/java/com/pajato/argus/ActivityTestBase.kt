@@ -79,4 +79,8 @@ import org.junit.runner.RunWith
     fun Activity.runOnUiThread(f: () -> Unit) {
         runOnUiThread { f() }
     }
+
+    fun Activity.getIDName(id: Int): String {
+        return this.resources.getResourceEntryName(id)
+    }
 }

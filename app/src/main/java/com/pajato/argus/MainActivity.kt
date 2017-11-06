@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listItems.layoutManager = layoutManager
         val adapter = ListAdapter(mutableListOf())
         listItems.adapter = adapter
+        listItems.setOnTouchListener(TakeFocus(this))
 
         // Query the Database and update the adapter.
         val items: MutableList<Video> = getVideosFromDb(applicationContext)
