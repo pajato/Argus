@@ -1,14 +1,12 @@
 package com.pajato.argus
 
-import android.view.KeyEvent
+import android.app.Activity
+import android.content.Context
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.TextView.OnEditorActionListener
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 
 
@@ -20,8 +18,39 @@ class Delete(private val holder: ListAdapter.ViewHolder, private val adapter: Li
     }
 }
 
+// An onTouchListener that requests focus away from the view that has focus and dismisses the keyboard
+class TakeFocus(private val activity: Activity?) : View.OnTouchListener {
+    constructor() : this(null)
+
+    override fun onTouch(v: View, event: MotionEvent?): Boolean {
+        var focused = getFocus(v)
+        if (activity != null)
+            focused = activity.currentFocus
+
+        focused.clearFocus()
+
+        val imm: InputMethodManager? = focused.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
+        imm?.hideSoftInputFromWindow(focused.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+
+        v.requestFocus()
+        v.performClick()
+        return true
+    }
+
+    // We expect only one of three views (per CardView) to have focus in our app,
+    private fun getFocus(videoCardView: View): View {
+        val n = videoCardView.findViewById<EditText>(R.id.networkText)
+        val t = videoCardView.findViewById<EditText>(R.id.titleText)
+        return when {
+            n.hasFocus() -> n
+            t.hasFocus() -> t
+            else -> videoCardView
+        }
+    }
+}
+
 // Handle editing videos by tracking text inputs.
-class EditorHelper(private val editText: EditText, private val parent: View): OnEditorActionListener, TextWatcher {
+class EditorHelper(private val editText: EditText, private val parent: View): TextWatcher {
     private var previousTitle: String = ""
     private var previousNetwork: String = ""
 
@@ -47,15 +76,4 @@ class EditorHelper(private val editText: EditText, private val parent: View): On
 
     // While it is required we implement this method by the TextWatcher class, we do not need it.
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-    // Clear focus to disappear the text marker and ensure the soft keyboard is dismissed when Done
-    override fun onEditorAction(v: TextView, actionId: Int, event: KeyEvent?): Boolean {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            v.clearFocus()
-            (v.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager)
-                    .hideSoftInputFromWindow(v.windowToken, 0)
-            return true
-        }
-        return false
-    }
 }
