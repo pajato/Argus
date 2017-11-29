@@ -1,7 +1,7 @@
 package com.pajato.argus
 
 import android.graphics.Color
-import android.graphics.PorterDuff
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -36,8 +36,25 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         // Set an onClick and color the delete button.
         val deleteButton = holder.layout.deleteButton
         deleteButton.setOnClickListener(Delete(holder, this))
-        deleteButton.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+        deleteButton.setColorFilter(Color.GRAY)
         holder.layout.card_view.setOnTouchListener(TakeFocus())
+
+        // Populate the date text and set calendar choice onClicks
+        val dateTextView = holder.layout.dateText
+        dateTextView.text = items[position].dateWatched
+        if (items[position].dateWatched != "") {
+            holder.layout.dateButton.setColorFilter(ContextCompat.getColor(holder.layout.context, R.color.colorAccent))
+            holder.layout.viewedEye.visibility = View.VISIBLE
+            holder.layout.viewedEye.setColorFilter(Color.GRAY)
+        } else {
+            holder.layout.dateButton.setColorFilter(Color.GRAY)
+            holder.layout.viewedEye.visibility = View.INVISIBLE
+        }
+
+        val recordDateOnClick = RecordDate(holder.layout.card_view)
+        holder.layout.dateButton.setOnClickListener(recordDateOnClick)
+        dateTextView.setOnClickListener(recordDateOnClick)
+        holder.layout.viewedEye.setOnClickListener(recordDateOnClick)
     }
 
     override fun getItemCount(): Int {
@@ -49,7 +66,7 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         this.notifyItemInserted(items.size - 1)
     }
 
-    fun removeItem(position : Int) {
+    fun removeItem(position: Int) {
         items.removeAt(position)
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, items.size)

@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val type = data.getStringExtra(TYPE_KEY)
             val title = data.getStringExtra(TITLE_KEY)
             val provider = data.getStringExtra(NETWORK_KEY)
-            val video = Video(title, provider, type)
+            val video = Video(title, provider, "", type)
             addVideo(video)
         }
     }
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { _ ->
-            // Add a new title via an IMDB search.
+            // Add a new title. TODO: via an IMDB search.
             val intent = Intent(this, SearchActivity::class.java)
             startActivityForResult(intent, Companion.SEARCH_REQUEST)
         }

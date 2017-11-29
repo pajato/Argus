@@ -2,12 +2,19 @@ package com.pajato.argus
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.EditText
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
+import kotlinx.android.synthetic.main.video_layout.view.*
+import java.text.DateFormat
+import java.util.*
 
 
 // An onClick that deletes the item from the adapter and removes it from the database.
@@ -15,6 +22,54 @@ class Delete(private val holder: ListAdapter.ViewHolder, private val adapter: Li
     override fun onClick(v: View?) {
         deleteVideo(adapter.items[holder.adapterPosition], holder.layout.context)
         adapter.removeItem(holder.adapterPosition)
+    }
+}
+
+// Handle editing videos by tracking text inputs.
+class EditorHelper(private val editText: EditText, private val parent: View) : TextWatcher {
+    private var previousTitle: String = ""
+    private var previousNetwork: String = ""
+
+    // After the text is changed, update the database.
+    override fun afterTextChanged(s: Editable?) {
+        val dateWatched: String = parent.findViewById<TextView>(R.id.dateText).text.toString()
+        if (editText.id == R.id.titleText) {
+            val v = Video(s.toString(), previousNetwork, dateWatched)
+            updateVideo(previousTitle, v, editText.context)
+        } else {
+            val v = Video(previousTitle, s.toString(), dateWatched)
+            updateVideo(previousTitle, v, editText.context)
+        }
+    }
+
+    // Before the text is changed, save the previous information.
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        if (editText.id == R.id.titleText) {
+            previousTitle = s.toString()
+            previousNetwork = parent.findViewById<EditText>(R.id.networkText).text.toString()
+        } else {
+            previousNetwork = s.toString()
+            previousTitle = parent.findViewById<EditText>(R.id.titleText).text.toString()
+        }
+    }
+
+    // While it is required we implement this method by the TextWatcher class, we do not need it.
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+}
+
+class RecordDate(private val cardView: CardView) : View.OnClickListener {
+    override fun onClick(view: View) {
+        val date = DateFormat.getDateInstance().format(Date())
+
+        cardView.dateText.text = date
+        val title = cardView.titleText.text.toString()
+        val network = cardView.networkText.text.toString()
+        val v = Video(title, network, date)
+        updateVideo(title, v, cardView.context)
+
+        cardView.viewedEye.visibility = View.VISIBLE
+        cardView.viewedEye.setColorFilter(Color.GRAY)
+        cardView.dateButton.setColorFilter(ContextCompat.getColor(cardView.context, R.color.colorAccent))
     }
 }
 
@@ -47,33 +102,4 @@ class TakeFocus(private val activity: Activity?) : View.OnTouchListener {
             else -> videoCardView
         }
     }
-}
-
-// Handle editing videos by tracking text inputs.
-class EditorHelper(private val editText: EditText, private val parent: View): TextWatcher {
-    private var previousTitle: String = ""
-    private var previousNetwork: String = ""
-
-    // After the text is changed, update the database.
-    override fun afterTextChanged(s: Editable?) {
-        if (editText.id == R.id.titleText) {
-            updateVideo(previousTitle, Video(s.toString(), previousNetwork), editText.context)
-        } else {
-            updateVideo(previousTitle, Video(previousTitle, s.toString()), editText.context)
-        }
-    }
-
-    // Before the text is changed, save the previous information.
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        if (editText.id == R.id.titleText) {
-            previousTitle = s.toString()
-            previousNetwork = parent.findViewById<EditText>(R.id.networkText).text.toString()
-        } else {
-            previousNetwork = s.toString()
-            previousTitle = parent.findViewById<EditText>(R.id.titleText).text.toString()
-        }
-    }
-
-    // While it is required we implement this method by the TextWatcher class, we do not need it.
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 }
