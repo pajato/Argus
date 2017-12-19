@@ -35,7 +35,7 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
 
         // Set an onClick and color the delete button.
         val deleteButton = holder.layout.deleteButton
-        deleteButton.setOnClickListener(Delete(holder, this))
+        deleteButton.setOnClickListener(Delete(holder.adapterPosition))
         deleteButton.setColorFilter(Color.GRAY)
         holder.layout.card_view.setOnTouchListener(TakeFocus())
 
@@ -50,8 +50,9 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
             holder.layout.dateButton.setColorFilter(Color.GRAY)
             holder.layout.viewedEye.visibility = View.INVISIBLE
         }
+        holder.layout.locationText.text = items[position].locationWatched
 
-        val recordDateOnClick = RecordDate(holder.layout.card_view)
+        val recordDateOnClick = RecordDate(holder.adapterPosition)
         holder.layout.dateButton.setOnClickListener(recordDateOnClick)
         dateTextView.setOnClickListener(recordDateOnClick)
         holder.layout.viewedEye.setOnClickListener(recordDateOnClick)
@@ -66,10 +67,11 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         this.notifyItemInserted(items.size - 1)
     }
 
-    fun removeItem(position: Int) {
-        items.removeAt(position)
+    fun removeItem(position: Int): Video {
+        val v = items.removeAt(position)
         notifyItemRemoved(position)
         notifyItemRangeChanged(position, items.size)
+        return v
     }
 
     // The ViewHolder class

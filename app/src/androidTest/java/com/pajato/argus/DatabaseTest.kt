@@ -1,11 +1,9 @@
 package com.pajato.argus
 
-import android.content.Intent
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.v7.widget.AppCompatImageView
@@ -35,7 +33,8 @@ class DatabaseTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
         checkViewVisibility(ViewMatchers.withId(R.id.listItems), Visibility.VISIBLE)
         Assert.assertEquals("Adapter has wrong count after first lifecycle", 2, rule.activity.listItems.adapter.itemCount)
         onView(Matchers.allOf(instanceOf(AppCompatImageView::class.java), hasSibling(withText("Luther")),
-                hasSibling(ViewMatchers.withText("HBO Go"))))
+                hasSibling(ViewMatchers.withText("HBO Go")),
+                withId(R.id.deleteButton)))
                 .perform(click())
         checkViewVisibility(withId(R.id.listItems), Visibility.VISIBLE)
         Assert.assertEquals("Adapter has wrong count after deleting", 1, rule.activity.listItems.adapter.itemCount)
@@ -76,12 +75,5 @@ class DatabaseTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
         onView(withText("The 100"))
                 .check(matches(isDisplayed()))
                 .perform(click())
-    }
-
-    private fun doLifeCycle(intent: Intent? = null) {
-        rule.activity.finish()
-        Intents.release()
-
-        rule.launchActivity(intent)
     }
 }

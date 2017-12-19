@@ -18,10 +18,12 @@
 package com.pajato.argus
 
 import android.app.Activity
+import android.content.Intent
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.DrawerActions
+import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.intent.Intents.intended
 import android.support.test.espresso.intent.matcher.IntentMatchers
 import android.support.test.espresso.intent.rule.IntentsTestRule
@@ -82,5 +84,12 @@ import org.junit.runner.RunWith
 
     fun Activity.getIDName(id: Int): String {
         return this.resources.getResourceEntryName(id)
+    }
+
+    protected fun doLifeCycle(intent: Intent? = null) {
+        rule.activity.finish()
+        Intents.release()
+
+        rule.launchActivity(intent)
     }
 }

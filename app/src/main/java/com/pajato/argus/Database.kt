@@ -13,6 +13,7 @@ object DatabaseEntry : BaseColumns {
     val COLUMN_NAME_TITLE = "title"
     val COLUMN_NAME_NETWORK = "network"
     val COLUMN_NAME_DATE_WATCHED = "dateWatched"
+    val COLUMN_NAME_LOCATION_WATCHED = "locationWatched"
     @Suppress("ObjectPropertyName")
     val _ID = BaseColumns._ID
 }
@@ -27,21 +28,27 @@ class DatabaseReaderHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
         if (oldVersion < 2) {
             db.execSQL(DATABASE_ALTER_FOR_V2)
         }
+        if (oldVersion < 3) {
+            db.execSQL(DATABASE_ALTER_FOR_V3)
+        }
     }
 
     companion object {
         private val SQL_CREATE_ENTRIES = "CREATE TABLE " + DatabaseEntry.TABLE_NAME + " (" +
-                DatabaseEntry._ID + " INTEGER PRIMARY KEY," + DatabaseEntry.COLUMN_NAME_TITLE +
-                " TEXT," + DatabaseEntry.COLUMN_NAME_NETWORK + " TEXT," +
-                DatabaseEntry.COLUMN_NAME_DATE_WATCHED + " TEXT)"
+                DatabaseEntry._ID + " INTEGER PRIMARY KEY, " + DatabaseEntry.COLUMN_NAME_TITLE +
+                " TEXT," + DatabaseEntry.COLUMN_NAME_NETWORK + " TEXT, " +
+                DatabaseEntry.COLUMN_NAME_DATE_WATCHED + " TEXT, " +
+                DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED + " TEXT)"
 
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DatabaseEntry.TABLE_NAME
 
         private val DATABASE_ALTER_FOR_V2 = "ALTER TABLE ${DatabaseEntry.TABLE_NAME} " +
                 "ADD COLUMN ${DatabaseEntry.COLUMN_NAME_DATE_WATCHED} TEXT NOT NULL DEFAULT '';"
+        private val DATABASE_ALTER_FOR_V3 = "ALTER TABLE ${DatabaseEntry.TABLE_NAME} " +
+                "ADD COLUMN ${DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED} TEXT NOT NULL DEFAULT '';"
 
         // If you change the database schema, you must increment the database version.
-        val DATABASE_VERSION: Int = 2
+        val DATABASE_VERSION: Int = 3
         private var DATABASE_NAME: String = "Argus.db"
 
         fun setDatabaseName(name: String) {
@@ -58,6 +65,7 @@ fun writeVideo(v: Video, context: Context) {
     values.put(DatabaseEntry.COLUMN_NAME_TITLE, v.title)
     values.put(DatabaseEntry.COLUMN_NAME_NETWORK, v.network)
     values.put(DatabaseEntry.COLUMN_NAME_DATE_WATCHED, v.dateWatched)
+    values.put(DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED, v.locationWatched)
     db.insert(DatabaseEntry.TABLE_NAME, null, values)
 }
 
@@ -65,7 +73,9 @@ fun writeVideo(v: Video, context: Context) {
 fun getVideosFromDb(context: Context): MutableList<Video> {
     // Search the database for all entries.
     val db = DatabaseReaderHelper(context).writableDatabase
-    val projection = arrayOf(DatabaseEntry._ID, DatabaseEntry.COLUMN_NAME_TITLE, DatabaseEntry.COLUMN_NAME_NETWORK, DatabaseEntry.COLUMN_NAME_DATE_WATCHED)
+    val projection = arrayOf(DatabaseEntry._ID, DatabaseEntry.COLUMN_NAME_TITLE,
+            DatabaseEntry.COLUMN_NAME_NETWORK, DatabaseEntry.COLUMN_NAME_DATE_WATCHED,
+            DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED)
     val sortOrder = DatabaseEntry.COLUMN_NAME_NETWORK + " DESC"
     val cursor: Cursor = db.query(DatabaseEntry.TABLE_NAME, projection, null, null, null, null, sortOrder)
     val items = mutableListOf<Video>()
@@ -75,7 +85,8 @@ fun getVideosFromDb(context: Context): MutableList<Video> {
         val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_TITLE))
         val network = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_NETWORK))
         val dateWatched = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_DATE_WATCHED))
-        val video = Video(title, network, dateWatched)
+        val locationWatched = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED))
+        val video = Video(title, network, dateWatched, "", locationWatched)
         items.add(video)
     }
     cursor.close()
@@ -88,6 +99,7 @@ fun updateVideo(previousTitle: String, v: Video, context: Context) {
     values.put(DatabaseEntry.COLUMN_NAME_TITLE, v.title)
     values.put(DatabaseEntry.COLUMN_NAME_NETWORK, v.network)
     values.put(DatabaseEntry.COLUMN_NAME_DATE_WATCHED, v.dateWatched)
+    values.put(DatabaseEntry.COLUMN_NAME_LOCATION_WATCHED, v.locationWatched)
 
     val selection = DatabaseEntry.COLUMN_NAME_TITLE + " LIKE ?"
     val args: Array<String> = arrayOf(previousTitle)

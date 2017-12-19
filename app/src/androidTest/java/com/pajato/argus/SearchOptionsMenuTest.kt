@@ -28,7 +28,7 @@ import org.junit.Test
 class SearchOptionsMenuTest : ActivityTestBase<SearchActivity>(SearchActivity::class.java) {
 
     /** Test the overflow menu test item. */
-    @Test fun testOveflowMenuSettingsItem() {
+    @Test fun testOverflowMenuSettingsItem() {
         // Exercise the default case, the dummy test menu item.
         val activity = rule.activity
         val menu = activity.searchToolbar.menu

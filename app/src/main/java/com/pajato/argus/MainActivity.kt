@@ -2,6 +2,7 @@ package com.pajato.argus
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -15,6 +16,8 @@ import android.view.View
 import com.pajato.argus.SearchActivity.Companion.NETWORK_KEY
 import com.pajato.argus.SearchActivity.Companion.TITLE_KEY
 import com.pajato.argus.SearchActivity.Companion.TYPE_KEY
+import com.pajato.argus.event.LocationPermissionEvent
+import com.pajato.argus.event.RxBus
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -50,6 +53,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        LocationEventManager.init(this)
+        RecyclerViewHolderManager.init(this)
+
         fab.setOnClickListener { _ ->
             // Add a new title. TODO: via an IMDB search.
             val intent = Intent(this, SearchActivity::class.java)
@@ -80,6 +86,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             updateLayoutIsEmpty(true)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocationEventManager.destroy()
+        RecyclerViewHolderManager.destroy()
     }
 
     override fun onBackPressed() {
@@ -133,6 +145,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == MainActivity.LOCATION_REQUEST_CODE) {
+            val p: Boolean = (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            RxBus.send(LocationPermissionEvent(p))
+        }
+    }
+
     private fun updateLayoutIsEmpty(isEmpty: Boolean) {
         if (isEmpty) {
             emptyListFrame.visibility = View.VISIBLE
@@ -146,5 +165,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object {
         /** The search activity request key. */
         private val SEARCH_REQUEST: Int = 1
+        val LOCATION_REQUEST_CODE: Int = 0
     }
 }

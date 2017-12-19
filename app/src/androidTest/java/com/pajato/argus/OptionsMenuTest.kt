@@ -31,10 +31,10 @@ import org.junit.Test
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */
-class OptonsMenuTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
+class OptionsMenuTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     /** Test the overflow menu "Settings" item. */
-    @Test fun testOveflowMenuSettingsItem() {
+    @Test fun testOverflowMenuSettingsItem() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
         checkViewVisibility(withText(R.string.action_settings), VISIBLE)
         onView(withText(R.string.action_settings)).perform(click())

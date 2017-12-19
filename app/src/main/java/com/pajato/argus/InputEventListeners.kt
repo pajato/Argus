@@ -2,9 +2,6 @@ package com.pajato.argus
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.EditText
 import android.text.Editable
@@ -12,20 +9,19 @@ import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
-import kotlinx.android.synthetic.main.video_layout.view.*
+import com.pajato.argus.event.*
 import java.text.DateFormat
 import java.util.*
 
 
-// An onClick that deletes the item from the adapter and removes it from the database.
-class Delete(private val holder: ListAdapter.ViewHolder, private val adapter: ListAdapter) : View.OnClickListener {
+/** An onClick that deletes the item from the adapter and removes it from the database. */
+class Delete(private val position: Int) : View.OnClickListener {
     override fun onClick(v: View?) {
-        deleteVideo(adapter.items[holder.adapterPosition], holder.layout.context)
-        adapter.removeItem(holder.adapterPosition)
+        RxBus.send(DeleteEvent(position))
     }
 }
 
-// Handle editing videos by tracking text inputs.
+/** Handle editing videos by tracking text inputs. */
 class EditorHelper(private val editText: EditText, private val parent: View) : TextWatcher {
     private var previousTitle: String = ""
     private var previousNetwork: String = ""
@@ -57,23 +53,18 @@ class EditorHelper(private val editText: EditText, private val parent: View) : T
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 }
 
-class RecordDate(private val cardView: CardView) : View.OnClickListener {
+/** An onClick that captures the current date and stores in in the video layout. */
+class RecordDate(private val position: Int) : View.OnClickListener {
     override fun onClick(view: View) {
         val date = DateFormat.getDateInstance().format(Date())
-
-        cardView.dateText.text = date
-        val title = cardView.titleText.text.toString()
-        val network = cardView.networkText.text.toString()
-        val v = Video(title, network, date)
-        updateVideo(title, v, cardView.context)
-
-        cardView.viewedEye.visibility = View.VISIBLE
-        cardView.viewedEye.setColorFilter(Color.GRAY)
-        cardView.dateButton.setColorFilter(ContextCompat.getColor(cardView.context, R.color.colorAccent))
+        val event = WatchedEvent(position)
+        event.setDateWatched(date)
+        RxBus.send(event)
+        RxBus.send(LocationEvent(position))
     }
 }
 
-// An onTouchListener that requests focus away from the view that has focus and dismisses the keyboard
+/** An onTouchListener that requests focus away from the view that has focus and dismisses the keyboard */
 class TakeFocus(private val activity: Activity?) : View.OnTouchListener {
     constructor() : this(null)
 
@@ -84,8 +75,8 @@ class TakeFocus(private val activity: Activity?) : View.OnTouchListener {
 
         focused.clearFocus()
 
-        val imm: InputMethodManager? = focused.context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager?
-        imm?.hideSoftInputFromWindow(focused.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        val imm: InputMethodManager = focused.context.getSystemService(Context.INPUT_METHOD_SERVICE)!! as InputMethodManager
+        imm.hideSoftInputFromWindow(focused.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
 
         v.requestFocus()
         v.performClick()
