@@ -13,6 +13,7 @@ object RecyclerViewHolderManager : Event.EventListener {
     private lateinit var activity: MainActivity
     private var subs: List<Disposable> = emptyList()
 
+    /** Subscribe to events and obtain the instance of the MainActivity. */
     fun init(activity: MainActivity) {
         this.activity = activity
         subs = listOf(RxBus.subscribeToEventType(DeleteEvent::class.java, this),
@@ -20,6 +21,7 @@ object RecyclerViewHolderManager : Event.EventListener {
                 RxBus.subscribeToEventType(WatchedEvent::class.java, this))
     }
 
+    /** Handle events differently depending on their class. */
     override fun accept(event: Event) {
         when (event) {
             is DeleteEvent -> handleDeleteEvent(event)
@@ -28,12 +30,14 @@ object RecyclerViewHolderManager : Event.EventListener {
         }
     }
 
+    /** Delete events remove the video from the layout and remove it from the database. */
     private fun handleDeleteEvent(event: DeleteEvent) {
         val position = event.getData()
         val v = (activity.listItems.adapter!! as ListAdapter).removeItem(position)
         deleteVideo(v, activity)
     }
 
+    /** Location Events update the layout according to the new location, and update the database. */
     private fun handleLocationEvent(event: LocationEvent) {
         val position = event.getData()
         if (position == -1)
@@ -42,14 +46,15 @@ object RecyclerViewHolderManager : Event.EventListener {
         val locationWatched: String = event.getLocation()
         layout.locationText.text = locationWatched
 
+        // Get the video's full information from the layout and update its entry in the database.
         val title = layout.titleText.text.toString()
         val network = layout.networkText.text.toString()
         val dateWatched = layout.dateText.text.toString()
-
         val v = Video(title, network, dateWatched, "", locationWatched)
         updateVideo(v.title, v, activity)
     }
 
+    /** Watched Events should update the layout and update the video in the database. */
     private fun handleWatchedEvent(event: WatchedEvent) {
         val position = event.getData()
         val layout = activity.listItems.getChildAt(position)
@@ -65,6 +70,7 @@ object RecyclerViewHolderManager : Event.EventListener {
         layout.dateButton.setColorFilter(ContextCompat.getColor(layout.context, R.color.colorAccent))
     }
 
+    /** Unsubscribe from events. */
     fun destroy() {
         subs.forEachIndexed { _, disposable -> disposable.dispose() }
         subs = emptyList()

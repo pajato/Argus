@@ -5,10 +5,10 @@ import io.reactivex.functions.Consumer
 interface Event {
     fun getData(): Any
 
-    interface EventListener: Consumer<Event>
+    interface EventListener : Consumer<Event>
 }
 
-class WatchedEvent(private val position: Int): Event {
+class WatchedEvent(private val position: Int) : Event {
     private var timeWatched: String = ""
 
     override fun getData(): Int {
@@ -23,13 +23,14 @@ class WatchedEvent(private val position: Int): Event {
         return this.timeWatched
     }
 
-    interface WatchedEventListener: Consumer<WatchedEvent>
+    interface WatchedEventListener : Consumer<WatchedEvent>
 }
 
-class LocationEvent(private val position: Int): Event {
+class LocationEvent(private val position: Int) : Event {
     constructor(position: Int, location: String) : this(position) {
         this.setLocation(location)
     }
+
     private var locationWatched: String = ""
 
     override fun getData(): Int {
@@ -44,21 +45,21 @@ class LocationEvent(private val position: Int): Event {
         this.locationWatched = location
     }
 
-    interface LocationEventListener: Consumer<LocationEvent>
+    interface LocationEventListener : Consumer<LocationEvent>
 }
 
-class DeleteEvent(private val indexDeleted: Int): Event {
+class DeleteEvent(private val indexDeleted: Int) : Event {
     override fun getData(): Int {
         return indexDeleted
     }
 
-    interface DeleteEventListener: Consumer<DeleteEvent>
+    interface DeleteEventListener : Consumer<DeleteEvent>
 }
 
-class LocationPermissionEvent(private val permissionGranted: Boolean): Event {
+class LocationPermissionEvent(private val permissionGranted: Boolean) : Event {
     override fun getData(): Boolean {
         return permissionGranted
     }
 
-    interface LocationPermissionListener: Consumer<LocationPermissionEvent>
+    interface LocationPermissionListener : Consumer<LocationPermissionEvent>
 }

@@ -20,12 +20,14 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
     private lateinit var activity: MainActivity
     private var subscriptions: List<Disposable> = emptyList()
 
+    /** Subscribe to events and obtain the instance of the MainActivity. */
     fun init(activity: MainActivity) {
         this.activity = activity
         subscriptions = listOf(RxBus.subscribeToEventType(LocationEvent::class.java, this),
                 RxBus.subscribeToEventType(LocationPermissionEvent::class.java, this))
     }
 
+    /** Unsubscribe from events. */
     fun destroy() {
         subscriptions.forEachIndexed { _, disposable ->
             disposable.dispose()
@@ -33,6 +35,7 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
         subscriptions = emptyList()
     }
 
+    /** Handle events differently depending on their class. */
     override fun accept(event: Event) {
         when (event) {
             is LocationEvent -> handleLocationEvent(event)
@@ -40,6 +43,7 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
         }
     }
 
+    /** We only need to handle LocationEvents with no location. If they have a location already, they're handled. */
     private fun handleLocationEvent(event: LocationEvent) {
         if (event.getLocation() != "")
             return
@@ -48,12 +52,14 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
         requestLocationAccess()
     }
 
+    /** Location Permission Events indicate whether or not we should request a location. */
     private fun handleLocationPermission(event: LocationPermissionEvent) {
         if (event.getData()) {
             requestLocationAccess()
         }
     }
 
+    /** If we don't have Location permission, ask for it. If we have it, then request a location update. */
     private fun requestLocationAccess() {
         val p = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
         if (p != PackageManager.PERMISSION_GRANTED) {
@@ -72,6 +78,7 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
         }
     }
 
+    /** When we are given the users location, send out a location update. */
     override fun onLocationResult(locationResult: LocationResult) {
         val gcd = Geocoder(activity, Locale.getDefault())
         val location = locationResult.locations[0]

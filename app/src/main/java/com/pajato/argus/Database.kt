@@ -24,6 +24,7 @@ class DatabaseReaderHelper(context: Context) : SQLiteOpenHelper(context, DATABAS
         db.execSQL(SQL_CREATE_ENTRIES)
     }
 
+    /** Add additional database information for each database version. */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) {
             db.execSQL(DATABASE_ALTER_FOR_V2)
