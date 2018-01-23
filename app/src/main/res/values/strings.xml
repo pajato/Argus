@@ -14,7 +14,10 @@
     <string name="networkDescription">Enter a network name:</string>
     <string name="searchDescription">Get a video description: title and network</string>
     <string name="searchName">Title</string>
-    <string name="networkName">Network</string>`
+    <string name="networkName">Network</string>
+    <string name="season_label">S</string>
+    <string name="one">1</string>
+    <string name="episode_label">E</string>`
     <string-array name="networks">
         <item>ABC</item>
         <item>Amazon</item>

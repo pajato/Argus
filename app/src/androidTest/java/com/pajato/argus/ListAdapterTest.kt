@@ -27,7 +27,7 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         val adapter: ListAdapter = list.adapter as ListAdapter
         val videoName = "Luther"
         val network = "HBO Now"
-        val type = "video"
+        val type = ""
         onView(withId(R.id.fab)).perform(click())
 
         // Utilize espresso to wait for the activity to appear, then enter our data

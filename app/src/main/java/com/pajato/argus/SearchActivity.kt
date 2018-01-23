@@ -21,9 +21,9 @@ import kotlinx.android.synthetic.main.activity_search.*
 class SearchActivity : AppCompatActivity() {
 
     companion object {
-        val TYPE_KEY = "type"
         val TITLE_KEY = "title"
         val NETWORK_KEY = "network"
+        val EPISODIC_KEY = "episodic"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,9 +76,9 @@ class SearchActivity : AppCompatActivity() {
     private fun save() {
         // Return the collected data to the main activity.
         val result = Intent()
-        result.putExtra(TYPE_KEY, "video")
         result.putExtra(TITLE_KEY, searchName.editableText.toString())
         result.putExtra(NETWORK_KEY, network.editableText.toString())
+        result.putExtra(EPISODIC_KEY, episodicBox.isChecked)
         setResult(Activity.RESULT_OK, result)
         finish()
     }

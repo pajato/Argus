@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -13,11 +14,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.pajato.argus.SearchActivity.Companion.EPISODIC_KEY
 import com.pajato.argus.SearchActivity.Companion.NETWORK_KEY
 import com.pajato.argus.SearchActivity.Companion.TITLE_KEY
-import com.pajato.argus.SearchActivity.Companion.TYPE_KEY
-import com.pajato.argus.event.LocationPermissionEvent
-import com.pajato.argus.event.RxBus
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,11 +33,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK && data != null) {
-            val type = data.getStringExtra(TYPE_KEY)
             val title = data.getStringExtra(TITLE_KEY)
             val provider = data.getStringExtra(NETWORK_KEY)
-            val video = Video(title, provider, "", type)
-            addVideo(video)
+            val isEpisodic = data.getBooleanExtra(EPISODIC_KEY, false)
+            if (isEpisodic) {
+                val video = Episodic(title, provider)
+                addVideo(video)
+            } else {
+                val video = Video(title, provider)
+                addVideo(video)
+            }
         }
     }
 
@@ -52,9 +58,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        LocationEventManager.init(this)
-        RecyclerViewHolderManager.init(this)
 
         fab.setOnClickListener { _ ->
             // Add a new title. TODO: via an IMDB search.
@@ -74,7 +77,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listItems.layoutManager = layoutManager
         val adapter = ListAdapter(mutableListOf())
         listItems.adapter = adapter
-        listItems.setOnTouchListener(TakeFocus(this))
 
         // Query the Database and update the adapter.
         val items: MutableList<Video> = getVideosFromDb(applicationContext)
@@ -88,8 +90,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         LocationEventManager.destroy()
         RecyclerViewHolderManager.destroy()
     }
@@ -148,8 +150,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == MainActivity.LOCATION_REQUEST_CODE) {
             val p: Boolean = (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            RxBus.send(LocationPermissionEvent(p))
+          if (p && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                val locationReq = LocationRequest.create()
+                locationReq.numUpdates = 1
+                locationReq.priority = LocationRequest.PRIORITY_LOW_POWER
+                val client = FusedLocationProviderClient(this)
+                client.requestLocationUpdates(locationReq, LocationEventManager, null)
+            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocationEventManager.init(this)
+        RecyclerViewHolderManager.init(this)
     }
 
     private fun updateLayoutIsEmpty(isEmpty: Boolean) {

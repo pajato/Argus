@@ -32,8 +32,7 @@ class DatabaseTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
         // Ensure that the data is present post lifecycle, then delete one and ensure it's deleted.
         checkViewVisibility(ViewMatchers.withId(R.id.listItems), Visibility.VISIBLE)
         Assert.assertEquals("Adapter has wrong count after first lifecycle", 2, rule.activity.listItems.adapter.itemCount)
-        onView(Matchers.allOf(instanceOf(AppCompatImageView::class.java), hasSibling(withText("Luther")),
-                hasSibling(ViewMatchers.withText("HBO Go")),
+        onView(Matchers.allOf(instanceOf(AppCompatImageView::class.java), withParent(hasSibling(withText("Luther"))),
                 withId(R.id.deleteButton)))
                 .perform(click())
         checkViewVisibility(withId(R.id.listItems), Visibility.VISIBLE)

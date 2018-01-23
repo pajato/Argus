@@ -7,14 +7,11 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.location.*
-import com.pajato.argus.event.Event
-import com.pajato.argus.event.LocationEvent
-import com.pajato.argus.event.LocationPermissionEvent
-import com.pajato.argus.event.RxBus
+import com.pajato.argus.event.*
 import io.reactivex.disposables.Disposable
 import java.util.*
 
-object LocationEventManager : Event.EventListener, LocationCallback() {
+object LocationEventManager : LocationPermissionEvent.LocationEventListener, LocationCallback() {
 
     private var position: Int = -1
     private lateinit var activity: MainActivity
@@ -23,8 +20,7 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
     /** Subscribe to events and obtain the instance of the MainActivity. */
     fun init(activity: MainActivity) {
         this.activity = activity
-        subscriptions = listOf(RxBus.subscribeToEventType(LocationEvent::class.java, this),
-                RxBus.subscribeToEventType(LocationPermissionEvent::class.java, this))
+        subscriptions = listOf(RxBus.subscribeToEventType(LocationPermissionEvent::class.java, this))
     }
 
     /** Unsubscribe from events. */
@@ -36,27 +32,9 @@ object LocationEventManager : Event.EventListener, LocationCallback() {
     }
 
     /** Handle events differently depending on their class. */
-    override fun accept(event: Event) {
-        when (event) {
-            is LocationEvent -> handleLocationEvent(event)
-            is LocationPermissionEvent -> handleLocationPermission(event)
-        }
-    }
-
-    /** We only need to handle LocationEvents with no location. If they have a location already, they're handled. */
-    private fun handleLocationEvent(event: LocationEvent) {
-        if (event.getLocation() != "")
-            return
-
-        position = event.getData()
+    override fun accept(permissionEvent: LocationPermissionEvent) {
+        this.position = permissionEvent.getData()
         requestLocationAccess()
-    }
-
-    /** Location Permission Events indicate whether or not we should request a location. */
-    private fun handleLocationPermission(event: LocationPermissionEvent) {
-        if (event.getData()) {
-            requestLocationAccess()
-        }
     }
 
     /** If we don't have Location permission, ask for it. If we have it, then request a location update. */
