@@ -14,6 +14,11 @@ import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.util.Log
 import org.junit.Test
 
+/**
+ * Test incrementing and setting the season and episode of the tv show.
+ *
+ * @author Bryan Scott -- bryan@pajato.com
+ */
 class EpisodicTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     @Test fun testActivityResultTvShow() {

@@ -53,7 +53,7 @@ object RecyclerViewHolderManager : Event.EventListener {
     /** Season events update a particular episodic video's current season. */
     private fun handleSeasonEvent(event: SeasonEvent) {
         val position = event.getData()
-        val layout = activity.listItems.getChildAt(position)
+        val layout = activity.listItems.findViewHolderForAdapterPosition(position).itemView
         val title = layout.titleText.text.toString()
         val textView = layout.seasonText
         val field = "season"
@@ -68,7 +68,7 @@ object RecyclerViewHolderManager : Event.EventListener {
     /** Episode events update a particular episodic video's current episode. */
     private fun handleEpisodeEvent(event: EpisodeEvent) {
         val position = event.getData()
-        val layout = activity.listItems.getChildAt(position)
+        val layout = activity.listItems.findViewHolderForAdapterPosition(position).itemView
         val title = layout.titleText.text.toString()
         val textView = layout.episodeText
         val field = "episode"
@@ -84,7 +84,7 @@ object RecyclerViewHolderManager : Event.EventListener {
     /** Location Events update the layout according to the new location, and update the database. */
     private fun handleLocationEvent(event: LocationEvent) {
         val position = event.getData()
-        val layout = activity.listItems.getChildAt(position)
+        val layout = activity.listItems.findViewHolderForAdapterPosition(position).itemView
         val locationWatched: String = event.getLocation()
         layout.locationText?.text = locationWatched
 
@@ -94,24 +94,23 @@ object RecyclerViewHolderManager : Event.EventListener {
         updateVideoValues(layout.titleText.text.toString(), contentValues, activity)
     }
 
-    /** Watched Events should update the layout and update the video in the database. */
+    /** Watched Events should update the database. and then update the layout. */
     private fun handleWatchedEvent(event: WatchedEvent) {
         val position = event.getData()
-        val layout = activity.listItems.getChildAt(position)
-
-        layout.dateText?.text = event.getDateWatched()
+        val layout = activity.listItems.findViewHolderForLayoutPosition(position).itemView
 
         val contentValues = ContentValues()
         contentValues.put(DatabaseEntry.COLUMN_NAME_DATE_WATCHED, event.getDateWatched())
         updateVideoValues(layout.titleText.text.toString(), contentValues, activity)
 
+        layout.dateText?.text = event.getDateWatched()
         layout.findViewById<AppCompatImageView>(R.id.viewedEye)?.visibility = View.VISIBLE
         layout.findViewById<AppCompatImageView>(R.id.viewedEye)?.setColorFilter(Color.GRAY)
         layout.findViewById<AppCompatImageView>(R.id.dateButton)
                 .setColorFilter(ContextCompat.getColor(layout.context, R.color.colorAccent))
     }
 
-    /** Increment the season or episode value by one. */
+    /** Increment the season or episode value by one, then update the database. */
     private fun incrementSeasonOrEpisode(textView: TextView, title: String) {
         var number = parseInt(textView.text.toString())
         number += 1

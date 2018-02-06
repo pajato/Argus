@@ -122,7 +122,7 @@ fun getVideosFromDb(context: Context): MutableList<Video> {
             val video = Episodic(title, network, season, episode, dateWatched, locationWatched)
             items.add(video)
         } else {
-            val video = Video(title, network, dateWatched, "", locationWatched)
+            val video = Video(title, network, type, dateWatched, locationWatched)
             items.add(video)
         }
     }

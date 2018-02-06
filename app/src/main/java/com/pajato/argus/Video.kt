@@ -2,7 +2,7 @@ package com.pajato.argus
 
 /** A relatively simple POJO that stores the relevant data for each video to our database. */
 open class Video(val title: String, val network: String) {
-    var type: String = ""
+    var type: String = MOVIE_KEY
     var dateWatched: String = ""
     var locationWatched: String = ""
 
@@ -10,13 +10,9 @@ open class Video(val title: String, val network: String) {
         this.type = type
     }
 
-    constructor(title: String, network: String, dateWatched: String, type: String = MOVIE_KEY) : this(title, network) {
+    constructor(title: String, network: String, type: String, dateWatched: String, locationWatched: String) : this(title, network) {
         this.type = type
         this.dateWatched = dateWatched
-    }
-
-    constructor(title: String, network: String, dateWatched: String, type: String, locationWatched: String) :
-            this(title, network, dateWatched, type) {
         this.locationWatched = locationWatched
     }
 

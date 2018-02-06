@@ -13,6 +13,12 @@ import org.hamcrest.Matchers.instanceOf
 import org.junit.Assert
 import org.junit.Test
 
+/**
+ * Tests that data is persisted and is redisplayed on lifecycle changes, and that editing an entry
+ * is also persisted, with the "edit" persisted and not overridden.
+ *
+ * @author Bryan Scott -- bryan@pajato.com
+ */
 class DatabaseTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
     @Test
     fun testPersistedData() {

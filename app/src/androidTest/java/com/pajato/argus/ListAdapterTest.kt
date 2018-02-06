@@ -27,7 +27,6 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         val adapter: ListAdapter = list.adapter as ListAdapter
         val videoName = "Luther"
         val network = "HBO Now"
-        val type = ""
         onView(withId(R.id.fab)).perform(click())
 
         // Utilize espresso to wait for the activity to appear, then enter our data
@@ -41,9 +40,9 @@ class ListAdapterTest : ActivityTestBase<MainActivity>(MainActivity::class.java)
         checkViewVisibility(ViewMatchers.withId(R.id.listItems), ViewMatchers.Visibility.VISIBLE)
         assertEquals("Adapter has wrong count", 1, adapter.itemCount)
         val video = adapter.items[0]
-        assertEquals(video.title, videoName)
-        assertEquals(video.network, network)
-        assertEquals(video.type, type)
+        assertEquals(videoName, video.title)
+        assertEquals(network, video.network)
+        assertEquals(Video.MOVIE_KEY, video.type)
     }
 
     @Test fun testNullAdapter() {

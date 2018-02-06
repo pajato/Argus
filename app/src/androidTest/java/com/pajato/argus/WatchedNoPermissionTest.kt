@@ -18,6 +18,13 @@ import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 
 
+/**
+ * Tests the three permutations for location permissions. 1. Being prompted and refusing permission
+ * 2. Being prompted and accepting the permission. 3. Having already accepted the permission and
+ * not requiring the prompt again.
+ *
+ * @author Bryan Scott -- bryan@pajato.com
+ */
 class WatchedNoPermissionTest : ActivityTestBase<MainActivity>(MainActivity::class.java) {
 
     @Test
@@ -38,7 +45,7 @@ class WatchedNoPermissionTest : ActivityTestBase<MainActivity>(MainActivity::cla
         checkViewVisibility(dateButtonMatcherLuther, ViewMatchers.Visibility.VISIBLE)
         onView(dateButtonMatcherLuther)
                 .perform(click())
-        allowPermission(false)
+        respondToPermission(false)
 
         // Ensure blocking location still causes the date to change, but does not change the location.
         val date = DateFormat.getDateInstance().format(Date())
@@ -53,7 +60,7 @@ class WatchedNoPermissionTest : ActivityTestBase<MainActivity>(MainActivity::cla
         checkViewVisibility(dateButtonMatcherLuther, ViewMatchers.Visibility.VISIBLE)
         onView(dateButtonMatcherLuther)
                 .perform(click())
-        allowPermission(true)
+        respondToPermission(true)
 
         // Ensure that a location has been entered.
         checkViewVisibility(locTextMatcherLuther, ViewMatchers.Visibility.VISIBLE)
@@ -81,21 +88,6 @@ class WatchedNoPermissionTest : ActivityTestBase<MainActivity>(MainActivity::cla
                 .check(matches(not(withText(""))))
         onView(dateTextMatcherSimpsons)
                 .check(matches(withText(date)))
-    }
-
-    /** A shorthand method that will accept or deny the permission popup. */
-    private fun allowPermission(allow: Boolean) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            val s = if (allow) "ALLOW" else "DENY"
-            val allowPermissions = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).findObject(UiSelector().text(s))
-            if (allowPermissions.exists()) {
-                try {
-                    allowPermissions.click()
-                } catch (e: UiObjectNotFoundException) {
-                    Log.v(this::class.java.canonicalName, "Click Machine Broke")
-                }
-            }
-        }
     }
 
 }

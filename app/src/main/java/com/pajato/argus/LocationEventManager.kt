@@ -56,14 +56,14 @@ object LocationEventManager : LocationPermissionEvent.LocationEventListener, Loc
         }
     }
 
-    /** When we are given the users location, send out a location update. */
+    /** When we receive a location, acquire the town-level location & send out a location update. */
     override fun onLocationResult(locationResult: LocationResult) {
         val gcd = Geocoder(activity, Locale.getDefault())
         val location = locationResult.locations[0]
         if (location != null) {
             val addresses = gcd.getFromLocation(location.latitude, location.longitude, 1)
             val locality = addresses[0].locality + ", " + addresses[0].adminArea
-            Log.v("RECORD_DATE", "found locality for current location: " + locality)
+            Log.v("onLocationResult", "found locality for current location: " + locality)
             RxBus.send(LocationEvent(position, locality))
             position = -1
         }

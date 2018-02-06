@@ -92,6 +92,8 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         val viewedEye = holder.layout.findViewById<AppCompatImageView>(R.id.viewedEye)
         dateTextView?.text = items[position].dateWatched
         val dateButton = holder.layout.findViewById<AppCompatImageView>(R.id.dateButton)
+
+        // Depending on if the dateWatched property exists, display it or not.
         if (items[position].dateWatched != "") {
             dateButton.setColorFilter(ContextCompat.getColor(holder.layout.context, R.color.colorAccent))
             viewedEye?.visibility = View.VISIBLE
@@ -102,6 +104,7 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
         }
         holder.layout.locationText?.text = items[position].locationWatched
 
+        // Set up the recording onClick to the various views that should expect to be clicked on.
         val recordDateOnClick = RecordDate(holder.adapterPosition)
         dateButton.setOnClickListener(recordDateOnClick)
         dateTextView?.setOnClickListener(recordDateOnClick)
@@ -110,12 +113,14 @@ class ListAdapter(val items: MutableList<Video>) : RecyclerView.Adapter<ListAdap
 
     /** Episodic videos have specific additional listeners that need to be added. */
     private fun bindTvShow(holder: ViewHolder, position: Int) {
+        // Populate the season tracker and assign it an onclick.
         val seasonLabel = holder.layout.seasonLabel
         val seasonTracker = EpisodeTracker(position)
         seasonLabel.setOnClickListener(seasonTracker)
         seasonLabel.setOnLongClickListener(seasonTracker)
         holder.layout.seasonText.text = (items[position] as? Episodic)?.season?.toString() ?: "1"
 
+        // Populate the episode tracker and assign it an onClick.
         val episodeLabel = holder.layout.episodeLabel
         val episodeTracker = EpisodeTracker(position)
         episodeLabel.setOnClickListener(episodeTracker)
