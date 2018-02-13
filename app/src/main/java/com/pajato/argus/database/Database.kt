@@ -1,4 +1,4 @@
-package com.pajato.argus
+package com.pajato.argus.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -6,6 +6,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
+import com.pajato.argus.Episodic
+import com.pajato.argus.Video
 
 /** The object that defines the table contents */
 object DatabaseEntry : BaseColumns {
@@ -108,7 +110,7 @@ fun getVideosFromDb(context: Context): MutableList<Video> {
     val items = mutableListOf<Video>()
     // Put each of the database entries into Video objects and our video list.
     while (cursor.moveToNext()) {
-        //val itemId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseEntry._ID))
+        val itemId: Long = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseEntry._ID))
         val title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_TITLE))
         val network = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_NETWORK))
         val dateWatched = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_DATE_WATCHED))
@@ -119,10 +121,10 @@ fun getVideosFromDb(context: Context): MutableList<Video> {
         if (type == Video.TV_KEY) {
             val season = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_SEASON))
             val episode = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseEntry.COLUMN_NAME_EPISODE))
-            val video = Episodic(title, network, season, episode, dateWatched, locationWatched)
+            val video = Episodic(title, network, season, episode, dateWatched, locationWatched, itemId)
             items.add(video)
         } else {
-            val video = Video(title, network, type, dateWatched, locationWatched)
+            val video = Video(title, network, dateWatched, type, locationWatched, itemId)
             items.add(video)
         }
     }

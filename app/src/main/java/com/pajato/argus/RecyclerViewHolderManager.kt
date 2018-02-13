@@ -8,6 +8,9 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatImageView
 import android.view.View
 import android.widget.TextView
+import com.pajato.argus.database.DatabaseEntry
+import com.pajato.argus.database.deleteVideo
+import com.pajato.argus.database.updateVideoValues
 import com.pajato.argus.event.*
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.dialog_content.view.*

@@ -16,9 +16,14 @@ import android.view.MenuItem
 import android.view.View
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
+import com.google.firebase.FirebaseApp
 import com.pajato.argus.SearchActivity.Companion.EPISODIC_KEY
 import com.pajato.argus.SearchActivity.Companion.NETWORK_KEY
 import com.pajato.argus.SearchActivity.Companion.TITLE_KEY
+import com.pajato.argus.database.FirebaseManager
+import com.pajato.argus.database.FirebaseManager.storeAllVideos
+import com.pajato.argus.database.getVideosFromDb
+import com.pajato.argus.database.writeVideo
 import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.ContainerOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -79,8 +84,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         listItems.adapter = adapter
 
         // Query the Database and update the adapter.
+        FirebaseManager.init(this)
         val items: MutableList<Video> = getVideosFromDb(applicationContext)
         if (items.isNotEmpty()) {
+            FirebaseManager.storeAllVideos(items, this)
             updateLayoutIsEmpty(false)
             for (item in items) {
                 adapter.addItem(item)
@@ -150,7 +157,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == MainActivity.LOCATION_REQUEST_CODE) {
             val p: Boolean = (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-          if (p && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (p && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 val locationReq = LocationRequest.create()
                 locationReq.numUpdates = 1
                 locationReq.priority = LocationRequest.PRIORITY_LOW_POWER

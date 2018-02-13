@@ -2,6 +2,7 @@ package com.pajato.argus.event
 
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
 /** An object that serves as our simple event bus. Events are subscribed to using the
@@ -17,6 +18,8 @@ object RxBus {
 
     /** Subscribe a listener to an event type. */
     fun <T : Event> subscribeToEventType(c: Class<T>, listener: Consumer<in T>): Disposable {
-        return bus.ofType(c).subscribe(listener)
+        return bus.ofType(c)
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(listener)
     }
 }

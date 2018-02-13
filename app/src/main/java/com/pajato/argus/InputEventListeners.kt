@@ -9,6 +9,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
+import com.pajato.argus.database.DatabaseEntry
+import com.pajato.argus.database.updateVideoValues
 import com.pajato.argus.event.*
 import java.text.DateFormat
 import java.util.*

@@ -38,6 +38,8 @@ import android.support.test.uiautomator.UiObjectNotFoundException
 import android.support.test.uiautomator.UiSelector
 import android.util.Log
 import android.view.View
+import com.pajato.argus.database.DatabaseReaderHelper
+import com.pajato.argus.database.deleteAll
 import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before

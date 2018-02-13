@@ -5,15 +5,22 @@ open class Video(val title: String, val network: String) {
     var type: String = MOVIE_KEY
     var dateWatched: String = ""
     var locationWatched: String = ""
+    var id: Long = -1
 
     constructor(title: String, network: String, type: String) : this(title, network) {
         this.type = type
     }
 
-    constructor(title: String, network: String, type: String, dateWatched: String, locationWatched: String) : this(title, network) {
+    constructor(title: String, network: String, dateWatched: String, type: String, locationWatched: String)
+            : this(title, network, type) {
         this.type = type
         this.dateWatched = dateWatched
         this.locationWatched = locationWatched
+    }
+
+    constructor(title: String, network: String, date: String, type: String, location: String, id: Long)
+            : this(title, network, date, type, location) {
+        this.id = id
     }
 
     companion object {
@@ -32,10 +39,15 @@ class Episodic(title: String, network: String) : Video(title, network, Video.TV_
         this.episode = episode
     }
 
-    constructor(title: String, network: String, season: Int, episode: Int, dateWatched: String,
-                locationWatched: String) : this(title, network, season, episode) {
-        this.dateWatched = dateWatched
-        this.locationWatched = locationWatched
+    constructor(title: String, network: String, season: Int, episode: Int, date: String, location: String)
+            : this(title, network, season, episode) {
+        this.dateWatched = date
+        this.locationWatched = location
+    }
+
+    constructor(title: String, network: String, season: Int, episode: Int, date: String, location: String, id: Long)
+            : this(title, network, season, episode, date, location) {
+        this.id = id
     }
 
 }
