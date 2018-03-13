@@ -40,4 +40,5 @@
         <item>The CW</item>
         <item>YouTube Red</item>
     </string-array>
+    <string name="title_activity_billing">BillingActivity</string>
 </resources>

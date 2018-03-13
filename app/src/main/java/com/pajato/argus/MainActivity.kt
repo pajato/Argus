@@ -16,12 +16,12 @@ import android.view.MenuItem
 import android.view.View
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
-import com.google.firebase.FirebaseApp
 import com.pajato.argus.SearchActivity.Companion.EPISODIC_KEY
 import com.pajato.argus.SearchActivity.Companion.NETWORK_KEY
 import com.pajato.argus.SearchActivity.Companion.TITLE_KEY
+import com.pajato.argus.billing.BillingActivity
+import com.pajato.argus.billing.BillingManager
 import com.pajato.argus.database.FirebaseManager
-import com.pajato.argus.database.FirebaseManager.storeAllVideos
 import com.pajato.argus.database.getVideosFromDb
 import com.pajato.argus.database.writeVideo
 import kotlinx.android.extensions.CacheImplementation
@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        if (requestCode == BILLING_REQUEST) {
+            return
+        }
         if (resultCode == Activity.RESULT_OK && data != null) {
             val title = data.getStringExtra(TITLE_KEY)
             val provider = data.getStringExtra(NETWORK_KEY)
@@ -101,6 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onPause()
         LocationEventManager.destroy()
         RecyclerViewHolderManager.destroy()
+        BillingManager.destroy()
     }
 
     override fun onBackPressed() {
@@ -130,6 +134,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
+            R.id.cloud_storage -> {
+                val intent = Intent(this, BillingActivity::class.java)
+                startActivityForResult(intent, BILLING_REQUEST)
+            }
             R.id.nav_camera -> {
                 // Handle the camera action
             }
@@ -171,6 +179,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onResume()
         LocationEventManager.init(this)
         RecyclerViewHolderManager.init(this)
+        BillingManager.init(this)
     }
 
     private fun updateLayoutIsEmpty(isEmpty: Boolean) {
@@ -186,6 +195,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object {
         /** The search activity request key. */
         private val SEARCH_REQUEST: Int = 1
+        private val BILLING_REQUEST: Int = 2
         val LOCATION_REQUEST_CODE: Int = 0
     }
 }

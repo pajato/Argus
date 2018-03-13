@@ -3,6 +3,7 @@
     package="com.pajato.argus">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,10 @@
             android:label="@string/new_video"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".billing.BillingActivity"
+            android:label="@string/title_activity_billing"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
