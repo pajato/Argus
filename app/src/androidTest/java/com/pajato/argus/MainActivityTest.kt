@@ -17,6 +17,7 @@
 
 package com.pajato.argus
 
+import android.Manifest
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
@@ -27,11 +28,11 @@ import android.support.test.espresso.intent.matcher.IntentMatchers.toPackage
 import android.support.test.espresso.matcher.ViewMatchers.Visibility.*
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.view.inputmethod.InputMethodManager
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Test
 
 /**
- * Provide sufficient tests that the MainActivity class is 100% covered.
+ * Provide sufficient test cases that the MainActivity class is at or near 100% coverage.
  *
  * @author Paul Michael Reilly --- pmr@pajato.com
  */

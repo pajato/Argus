@@ -1,5 +1,8 @@
 package com.pajato.argus
 
+import android.Manifest
+import android.Manifest.permission.*
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.uiautomator.UiDevice
@@ -29,6 +32,17 @@ class WatchedNoPermissionTest : ActivityTestBase<MainActivity>(MainActivity::cla
 
     @Test
     fun testPermissions() {
+        // Exercise the onRequestPermissionsResult edge cases.
+        val emptyResults = IntArray(0)
+        val requestCode = MainActivity.LOCATION_REQUEST_CODE
+        val results = IntArray(1)
+        results[0] = -1
+        rule.activity.onRequestPermissionsResult(-1, arrayOf(), emptyResults)
+        rule.activity.onRequestPermissionsResult(requestCode, arrayOf(), emptyResults)
+        rule.activity.onRequestPermissionsResult(requestCode, arrayOf(), results)
+        results[0] = PERMISSION_GRANTED
+        rule.activity.onRequestPermissionsResult(requestCode, arrayOf(), results)
+
         // Add a video to the UI to setup our tests.
         val luther = Video("Luther", "HBO Go")
         val simpsons = Video ("The Simpsons", "Fox")
