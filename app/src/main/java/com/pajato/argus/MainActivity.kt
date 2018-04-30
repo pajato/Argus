@@ -1,11 +1,12 @@
 package com.pajato.argus
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { _ ->
             // Add a new title. TODO: via an IMDB search.
             val intent = Intent(this, SearchActivity::class.java)
-            startActivityForResult(intent, Companion.SEARCH_REQUEST)
+            startActivityForResult(intent, SEARCH_REQUEST)
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -147,15 +148,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == MainActivity.LOCATION_REQUEST_CODE) {
-            val p: Boolean = (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-          if (p && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                val locationReq = LocationRequest.create()
-                locationReq.numUpdates = 1
-                locationReq.priority = LocationRequest.PRIORITY_LOW_POWER
-                val client = FusedLocationProviderClient(this)
-                client.requestLocationUpdates(locationReq, LocationEventManager, null)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                                            grantResults: IntArray) {
+        when (requestCode) {
+            MainActivity.LOCATION_REQUEST_CODE -> {
+                val p = grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED
+                if (p && checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
+                    val locationReq = LocationRequest.create()
+                    locationReq.numUpdates = 1
+                    locationReq.priority = LocationRequest.PRIORITY_LOW_POWER
+                    val client = FusedLocationProviderClient(this)
+                    client.requestLocationUpdates(locationReq, LocationEventManager, null)
+                }
             }
         }
     }
